@@ -2,14 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '../users/entities/user.entity';
+import { User } from '../user/entities/user.entity';
 import { Repository } from 'typeorm';
 import { from,map, Observable } from 'rxjs';
 import { NotFoundException } from '@nestjs/common';
 
 
 @Injectable()
-export class UsersService {
+export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
@@ -25,7 +25,7 @@ export class UsersService {
     return from(this.userRepository.find());
   }
 
-  findOne(id: number): Observable<User | null> {
+  findOne(id: number): Observable<User> {
     return from(this.userRepository.findOne({
       where: {id: id},
       relations: ['user']
