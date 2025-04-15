@@ -1,7 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete,UseGuards } from '@nestjs/common';
 import { SalonService } from './salon.service';
 import { CreateSalonDto } from './dto/create-salon.dto';
 import { UpdateSalonDto } from './dto/update-salon.dto';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { DeleteResult } from 'typeorm';
+import { Observable } from 'rxjs';
+import { SalonInfo } from './dto/salon-info.dto';
+
 
 @Controller('salon')
 export class SalonController {
@@ -12,23 +18,17 @@ export class SalonController {
     //return this.salonService.create(createSalonDto);
   }
 
-  @Get()
-  findAll() {
-    return this.salonService.findAll();
-  }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.salonService.findOne(+id);
+  findOne(@Param('id') id: number): Observable<SalonInfo>{
+    return this.salonService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSalonDto: UpdateSalonDto) {
-    return this.salonService.update(+id, updateSalonDto);
-  }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.salonService.remove(+id);
+  @Roles('owner')
+  @UseGuards(RolesGuard)
+  deleteSalon(@Param('id') id: number): Observable<DeleteResult> {
+    return this.salonService.deleteSalon(id);
   }
 }

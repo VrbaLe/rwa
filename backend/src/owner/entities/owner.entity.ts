@@ -1,3 +1,4 @@
+import { Salon } from 'src/salon/entities/salon.entity';
 import { User } from 'src/user/entities/user.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn, OneToMany} from 'typeorm';
 
@@ -10,9 +11,15 @@ export class Owner {
     @JoinColumn()
     user: User;
 
+    @OneToMany(() => Salon, (salon) => salon.owner)
+    salons: Salon[];
+
     @Column()
-    name: string;
+    firstName: string;
   
+    @Column()
+    lastName: string;
+
     @Column({ nullable: true })
     about: string;
   
@@ -21,4 +28,7 @@ export class Owner {
 
     @Column({ nullable: true })
     instagram: string;
+
+    @Column({ nullable: true })
+    linkedin: string;
 }

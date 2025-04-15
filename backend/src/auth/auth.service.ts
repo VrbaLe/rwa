@@ -48,7 +48,7 @@ export class AuthService {
         );
     }
 
-    registerOwner({ email, password, name, about, instagram }: CreateOwnerDto): Observable<{ token: string }> {
+    registerOwner({ email, password, firstName,lastName, instagram }: CreateOwnerDto): Observable<{ token: string }> {
       return from(this.userRepository.findOne({ where: { email } })).pipe(
           switchMap(existingUser => {
               if (existingUser) {
@@ -64,8 +64,8 @@ export class AuthService {
                       return from(this.userRepository.save(user)).pipe(
                           switchMap(savedUser => {
                               const owner = new Owner();
-                              owner.name = name;
-                              owner.about = about;
+                              owner.firstName=firstName;
+                              owner.lastName=lastName;
                               owner.instagram = instagram;
                               owner.user = savedUser;
   

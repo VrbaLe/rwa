@@ -1,6 +1,7 @@
 export class OwnerDataDto {
     id: number;
-    name: string;
+    firstName: string;
+    lastName:string;
     about: string;
     picture?: string;
     instagram?: string;

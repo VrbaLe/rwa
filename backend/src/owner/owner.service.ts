@@ -27,8 +27,8 @@ export class OwnerService {
     user.password = ownerData.password;
 
     const owner = new Owner();
-    owner.name = ownerData.name;
-    owner.about = ownerData.about;
+    owner.firstName = ownerData.firstName;
+    owner.lastName = ownerData.lastName;
     owner.instagram = owner.instagram;
 
     user.owner = owner;
@@ -48,10 +48,12 @@ export class OwnerService {
       map(owners =>
         owners.map(owner=> ({
           id: owner.id,
-          name: owner.name,
+          firstName: owner.firstName,
+          lastName: owner.lastName,
           picture: owner.picture,
           about: owner.about,
-          instagram: owner.instagram
+          instagram: owner.instagram,
+          linkedin: owner.linkedin
         })),
       ),
     );

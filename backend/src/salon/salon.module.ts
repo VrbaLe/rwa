@@ -6,11 +6,12 @@ import { Salon } from './entities/salon.entity';
 import { User } from 'src/user/entities/user.entity';
 import { UserModule } from 'src/user/user.module';
 import { AuthModule } from 'src/auth/auth.module';
+import { Owner } from 'src/owner/entities/owner.entity';
+import { OwnerModule } from 'src/owner/owner.module';
 
 @Module({
- // imports:[TypeOrmModule.forFeature([Salon, User]), UserModule, AuthModule],
+  imports:[TypeOrmModule.forFeature([Salon, Owner]), OwnerModule, AuthModule],
   controllers: [SalonController],
   providers: [SalonService],
-  //exports:[SalonService],   
 })
 export class SalonModule {}
