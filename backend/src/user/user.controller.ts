@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Observable } from 'rxjs';
 import {User} from './entities/user.entity';  
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
 
 @Controller('user')
 export class UserController {
@@ -31,7 +33,9 @@ export class UserController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+  @Roles('owner', 'user')
+  @UseGuards(RolesGuard)
+  remove(@Param('id') id: number): Observable<void> {
+    return this.userService.remove(id);
   }
 }

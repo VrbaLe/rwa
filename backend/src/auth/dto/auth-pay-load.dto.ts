@@ -1,6 +1,5 @@
 export class AuthPayloadDtoRegister  {
-    username:string;
+    name: string;
     email: string;
     password: string;
-    role:string;
   }

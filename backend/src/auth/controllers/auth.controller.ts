@@ -9,6 +9,7 @@ import { CreateUserDto } from '../../user/dto/create-user.dto';
 import { catchError, map, Observable, of } from 'rxjs';
 import { Roles } from '../decorators/roles.decorator';
 import { RolesGuard } from '../guards/roles.guard';
+import { CreateOwnerDto } from 'src/owner/dto/create-owner.dto';
 
 
 
@@ -36,4 +37,20 @@ export class AuthController {
         );
     }
 
+    @Post('registerOwner')
+    registerOwner(@Body() ownerData: CreateOwnerDto): Observable<{ success: boolean; data?: any; message?: string }> {
+        return this.authService.registerOwner(ownerData).pipe(
+            map(result => ({ success: true, data: result })),
+            catchError(error => of({ success: false, message: error.message })),
+        );
+    }
+
+    @Put('changePassword/:id')
+    @UseGuards(RolesGuard)
+    changePassword(
+        @Param('id') user_id: number,
+        @Body() data: { oldPassword: string; newPassword: string }
+    ): Observable<{ message: string }> {
+        return this.authService.changePassword(user_id, data.oldPassword, data.newPassword);
+    }
 }
