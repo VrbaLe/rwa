@@ -1,6 +1,7 @@
 import { Owner } from 'src/owner/entities/owner.entity';
 import { User } from 'src/user/entities/user.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn, OneToMany,ManyToOne} from 'typeorm';
+import { Review } from 'src/reviews/entities/review.entity';
 
 @Entity()
 export class Salon {
@@ -25,6 +26,10 @@ export class Salon {
     
     @ManyToOne(() => Owner, (owner) => owner.salons , {eager: true})
     owner: Owner;
+
+
+    @OneToMany(() => Review, review => review.salon, {cascade: true, onDelete: 'CASCADE'})
+    reviews: Review[];
 
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

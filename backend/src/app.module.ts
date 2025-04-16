@@ -11,6 +11,8 @@ import { AuthModule} from './auth/auth.module';
 import { RolesGuard } from './auth/guards/roles.guard';
 import { SalonModule } from './salon/salon.module';
 import { OwnerModule } from './owner/owner.module';
+import { ReviewsModule } from './reviews/reviews.module';
+import { AppointmentsModule } from './appointments/appointments.module';
 
 @Module({
   imports: [
@@ -36,7 +38,9 @@ import { OwnerModule } from './owner/owner.module';
     UserModule,
     AuthModule,
     SalonModule,
-    OwnerModule
+    OwnerModule,
+    ReviewsModule,
+    AppointmentsModule
   ],
   controllers: [AppController],
   providers: [AppService],

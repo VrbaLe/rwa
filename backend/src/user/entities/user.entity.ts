@@ -1,6 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, OneToMany } from 'typeorm';
 import { Salon } from 'src/salon/entities/salon.entity';
 import { Owner } from 'src/owner/entities/owner.entity';
+import { Review } from 'src/reviews/entities/review.entity';
+
 
 @Entity()
 export class User {
@@ -15,6 +17,9 @@ export class User {
 
     @OneToOne(() => Owner, owner => owner.user, { nullable: true, cascade: true} )
     owner?: Owner;
+
+    @OneToMany(() => Review, review => review.user)
+    reviews: Review[];
 
     @Column({ default: 'user'})
     role: string;
