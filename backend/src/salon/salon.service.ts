@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, UpdateResult, Like } from 'typeorm';
+import { Repository, UpdateResult, Like, ILike } from 'typeorm';
 import { CreateSalonDto } from './dto/create-salon.dto';
 import { UpdateSalonDto } from './dto/update-salon.dto';
 import { Salon } from './entities/salon.entity';
@@ -64,6 +64,12 @@ export class SalonService {
     return from(this.salonRepository.findOne({where: {id: id}, relations: ['owner']}));
   }
 
+  searchSalon(text: string): Observable<SalonInfo[]> {
+    return from(this.salonRepository.find({
+      relations: ['reviews'],
+      where: { name: ILike(`${text}%`)}
+    }));
+  }
 
   deleteSalon(id: number): Observable<DeleteResult>{
     return from(this.salonRepository.delete({id}));

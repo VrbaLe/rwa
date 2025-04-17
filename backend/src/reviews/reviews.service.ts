@@ -42,7 +42,7 @@ export class ReviewsService {
     );
   }
 
-  findBookReviews(
+  findSalonReviews(
     pagination: PaginationDto,
     id: number
   ): Observable<ReviewDataDto[]>{

@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToOne, OneToMany } from 'typ
 import { Salon } from 'src/salon/entities/salon.entity';
 import { Owner } from 'src/owner/entities/owner.entity';
 import { Review } from 'src/reviews/entities/review.entity';
+import { Appointment } from 'src/appointments/entities/appointment.entity';
 
 
 @Entity()
@@ -20,6 +21,9 @@ export class User {
 
     @OneToMany(() => Review, review => review.user)
     reviews: Review[];
+
+    @OneToMany(() => Appointment, (appointment) => appointment.client)
+    appointments: Appointment[];
 
     @Column({ default: 'user'})
     role: string;

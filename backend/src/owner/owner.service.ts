@@ -43,7 +43,7 @@ export class OwnerService {
 
   findAll(): Observable<OwnerDataDto[]> {
     return from(this.ownerRepository.find(
-      {relations: ['salon']}
+      {relations: ['salons']}
     )).pipe(
       map(owners =>
         owners.map(owner=> ({
@@ -63,7 +63,7 @@ export class OwnerService {
     return from(this.ownerRepository.findOne(
       {
         where: {id: id},
-        relations: ['']
+        relations: ['salons']
       }
     ));
   }

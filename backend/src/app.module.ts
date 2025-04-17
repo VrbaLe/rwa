@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
-//import { DatabaseModule } from './database/database.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user/entities/user.entity';
@@ -13,6 +12,9 @@ import { SalonModule } from './salon/salon.module';
 import { OwnerModule } from './owner/owner.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { AppointmentsModule } from './appointments/appointments.module';
+import { Appointment } from './appointments/entities/appointment.entity';
+import { Owner } from './owner/entities/owner.entity';
+import { Salon } from './salon/entities/salon.entity';
 
 @Module({
   imports: [
@@ -28,13 +30,13 @@ import { AppointmentsModule } from './appointments/appointments.module';
         username: configService.get<string>('POSTGRES_USERNAME'),
         password: configService.get<string>('POSTGRES_PASSWORD'),
         database: configService.get<string>('POSTGRES_DATABASE'),
-        entities: [User],
+        entities: [User,Owner],
         autoLoadEntities: true,
         synchronize: true,
       }),
       inject: [ConfigService]
     }),
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User,Salon,Owner,Appointment]),
     UserModule,
     AuthModule,
     SalonModule,

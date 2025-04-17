@@ -28,7 +28,7 @@ export class ReviewsController {
       @Query('page') skip: number,
       @Query('limit') limit: number
   ): Observable<ReviewDataDto[]> {
-      return this.reviewService.findBookReviews({skip, limit}, id);
+      return this.reviewService.findSalonReviews({skip, limit}, id);
   }
   
   @Delete(':id')
