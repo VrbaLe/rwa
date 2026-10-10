@@ -7,5 +7,6 @@ export class CreateSalonDto{
     description: string;
     image: string;
     category: string;
+    city: string;
     tags?: string;
 }

@@ -20,8 +20,12 @@ export class SalonService {
     private ownerRepository: Repository<Owner>
   ){}
 
-  create(salonData: CreateSalonDto): Observable<Salon> {
-    return from(this.ownerRepository.findOneBy({ id: salonData.owner })).pipe(
+  create(salonData: CreateSalonDto, userId:number): Observable<Salon> {
+    return from(
+      //this.ownerRepository.findOneBy({ id: salonData.owner })
+      this.ownerRepository.findOne({ where: { user: { id: userId } } }),
+
+    ).pipe(
       switchMap((owner) => {
         if (!owner) {
           throw new Error('Owner not found');
@@ -54,6 +58,7 @@ export class SalonService {
             description: salon.description,
             image: salon.image,
             category: salon.category,
+            city: salon.city,
             tags: salon.tags,
         }))
       )

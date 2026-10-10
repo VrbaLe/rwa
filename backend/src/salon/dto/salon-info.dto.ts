@@ -6,6 +6,7 @@ export class SalonInfo {
     name: string;
     description: string;
     image: string;
-    category: string;
+    category: string;    
+    city: string;
     tags?: string;
 }

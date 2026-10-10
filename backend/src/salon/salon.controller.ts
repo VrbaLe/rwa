@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete,UseGuards, Query, UseInterceptors, UploadedFiles } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete,UseGuards, Query, UseInterceptors, UploadedFiles, Req } from '@nestjs/common';
 import { SalonService } from './salon.service';
 import { CreateSalonDto } from './dto/create-salon.dto';
 import { UpdateSalonDto } from './dto/update-salon.dto';
@@ -19,7 +19,7 @@ export class SalonController {
   constructor(private readonly salonService: SalonService) {}
 
   @Post()
-  @Roles('author')
+  @Roles('owner')
   @UseGuards(RolesGuard)
   @UseInterceptors(FileFieldsInterceptor([
       { name: 'image', maxCount: 1 }
@@ -36,12 +36,13 @@ export class SalonController {
         }
       })
     }))
-    create(@Body() createSalonDto: CreateSalonDto, @UploadedFiles() files: { image?: Express.Multer.File[]}): Observable<Salon> {
-      const image = files.image ? files.image[0] : null;
+    create(@Body() createSalonDto: CreateSalonDto, @UploadedFiles() files: { image?: Express.Multer.File[]}, @Req() req): Observable<Salon> {
+      const image = files?.image?.[0];
+      if (image) {
+        createSalonDto.image = image.path;
+      }
 
-      createSalonDto.image = image.path;
-
-      return this.salonService.create(createSalonDto);
+      return this.salonService.create(createSalonDto, req.user.id);
     }
 
   @Get()

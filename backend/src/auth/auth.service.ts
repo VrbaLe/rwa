@@ -86,25 +86,43 @@ export class AuthService {
       );
     }
 
+    // login({ username, password }: AuthPayloadDto): Observable<{ token: string }> {
+    //     return from(this.userRepository.findOne({ where: { email: username } })).pipe(
+    //       switchMap(user => {
+    //         if (!user) {
+    //           return throwError(() => new NotFoundException('User nije pronadjen'));
+    //         }
+    //         return from(bcrypt.compare(password, user.password)).pipe(
+    //           map(isPasswordValid => {
+    //             if (isPasswordValid) {
+    //               const { password, ...userWithoutPassword } = user;
+    //               return { token: this.jwtService.sign(userWithoutPassword)   };  
+    //             }
+    //             return null;
+    //           })
+    //         );
+    //       }),
+    //       catchError(err => throwError(() => err))
+    //     );
+    // }
     login({ username, password }: AuthPayloadDto): Observable<{ token: string }> {
-        return from(this.userRepository.findOne({ where: { email: username } })).pipe(
-          switchMap(user => {
-            if (!user) {
-              return throwError(() => new NotFoundException('User nije pronadjen'));
-            }
-            return from(bcrypt.compare(password, user.password)).pipe(
-              map(isPasswordValid => {
-                if (isPasswordValid) {
-                  const { password, ...userWithoutPassword } = user;
-                  return { token: this.jwtService.sign(userWithoutPassword)   };  
-                }
-                return null;
-              })
-            );
-          }),
-          catchError(err => throwError(() => err))
-        );
-    }
+  return from(this.userRepository.findOne({ where: { email: username } })).pipe(
+    switchMap(user => {
+      if (!user) {
+        return throwError(() => new UnauthorizedException('Pogrešan email ili lozinka'));
+      }
+      return from(bcrypt.compare(password, user.password)).pipe(
+        map(isPasswordValid => {
+          if (!isPasswordValid) {
+            throw new UnauthorizedException('Pogrešan email ili lozinka');
+          }
+          const { password, ...userWithoutPassword } = user;
+          return { token: this.jwtService.sign(userWithoutPassword) };
+        })
+      );
+    })
+  );
+}   
 
     changePassword(userId: number, oldPassword: string, newPassword: string): Observable<{ message: string }> {
       return from(this.userRepository.findOne({ where: { id: userId } })).pipe(
