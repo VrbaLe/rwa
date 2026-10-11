@@ -3,6 +3,11 @@
     "compileOnSave": false,
     "compilerOptions": {
       "outDir": "./dist/out-tsc",
+      "rootDir": "./src",
+      "ignoreDeprecations": "6.0",
+      "types": [
+            "jasmine"
+          ],
       "strict": true,
       "noImplicitOverride": true,
       "noPropertyAccessFromIndexSignature": true,
