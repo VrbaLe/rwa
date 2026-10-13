@@ -46,7 +46,7 @@ export class SalonService {
 
   findAll(pagination: PaginationDto): Observable<SalonInfo[]> {
     return from(this.salonRepository.find({
-       relations: ['owner'] ,
+       relations: ['owner','reviews'] ,
        skip: pagination.skip,
        take: pagination.limit
       })).pipe(
@@ -60,13 +60,20 @@ export class SalonService {
             category: salon.category,
             city: salon.city,
             tags: salon.tags,
+            reviews: (salon.reviews ?? []).map(r => ({
+              id: r.id,
+              rate: r.rate,
+              comment: r.comment,
+              created_at: r.created_at,
+              user: r.user ? { id: r.user.id } : undefined,
+          })),
         }))
       )
     )
   }
 
   findOne(id: number): Observable<SalonInfo> {
-    return from(this.salonRepository.findOne({where: {id: id}, relations: ['owner']}));
+    return from(this.salonRepository.findOne({where: {id: id}, relations: ['owner','reviews']}));
   }
 
   searchSalon(text: string): Observable<SalonInfo[]> {

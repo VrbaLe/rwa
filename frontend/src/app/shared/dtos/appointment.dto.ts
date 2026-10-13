@@ -3,8 +3,8 @@ import { UserDto } from './user.dto';
 
 export interface AppointmentDto {
   id: number;
-  appointmentDate: string; // 'YYYY-MM-DD'
-  timeSlot: string;        // 'HH:mm:ss'
+  appointmentDate: string; 
+  timeSlot: string;        
   created_at: string;
   salon?: SalonInfoDto;
   client?: UserDto;
