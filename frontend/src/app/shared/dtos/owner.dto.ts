@@ -1,4 +1,5 @@
-import { UserDto } from './user.dto';
+import { UserShortDto } from './user.dto';
+import { SalonInfoDto } from './salon-info.dto';
 
 export interface OwnerDto {
   id: number;
@@ -8,5 +9,5 @@ export interface OwnerDto {
   picture?: string;
   instagram?: string;
   linkedin?: string;
-  user?: UserDto;
+  salons?: SalonInfoDto;
 }

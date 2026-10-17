@@ -1,5 +1,5 @@
 import { SalonInfoDto } from './salon-info.dto';
-import { UserDto } from './user.dto';
+import { UserShortDto } from './user.dto';
 
 export interface AppointmentDto {
   id: number;
@@ -7,5 +7,5 @@ export interface AppointmentDto {
   timeSlot: string;        
   created_at: string;
   salon?: SalonInfoDto;
-  client?: UserDto;
+  client?: UserShortDto;
 }
