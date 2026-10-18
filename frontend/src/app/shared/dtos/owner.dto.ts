@@ -1,6 +1,8 @@
 import { UserShortDto } from './user.dto';
 import { SalonInfoDto } from './salon-info.dto';
 
+export type OwnerSalonDto = Omit<SalonInfoDto, 'owner'>;
+
 export interface OwnerDto {
   id: number;
   firstName: string;
@@ -9,5 +11,6 @@ export interface OwnerDto {
   picture?: string;
   instagram?: string;
   linkedin?: string;
-  salons?: SalonInfoDto;
+  user?: UserShortDto;
+  salons?: OwnerSalonDto[];
 }
