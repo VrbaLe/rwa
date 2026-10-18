@@ -113,7 +113,7 @@ export class AuthEffects {
     this.actions$.pipe(
       ofType(registerOwner),
       mergeMap(action =>
-        this.authService.registerOwner(action.name, action.surname, action.email, action.password, action.website).pipe(
+        this.authService.registerOwner(action.name, action.surname, action.email, action.password, action.instagram).pipe(
           map(response => {
             if(response){
               const { success, data, message } = response; 
