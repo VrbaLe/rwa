@@ -1,0 +1,22 @@
+import { ActionReducerMap } from '@ngrx/store';
+import { AuthState, authReducer } from './shared/store/auth/auth.reducer';
+import { UserState, userReducer } from './shared/store/user/user.reducer';
+import { OwnerState, ownerReducer } from './shared/store/owner/owner.reducer';
+import { SalonState, salonReducer } from './shared/store/salon/salon.reducer';
+import { AppointmentState, appointmentReducer } from './shared/store/appointment/appointment.reducer';
+
+export interface AppState {
+  auth: AuthState;
+  user: UserState;
+  owner: OwnerState;
+  salon: SalonState;
+  appointment: AppointmentState;
+}
+
+export const appReducers: ActionReducerMap<AppState> = {
+  auth: authReducer,
+  user: userReducer,
+  owner: ownerReducer,
+  salon: salonReducer,
+  appointment: appointmentReducer,
+};
