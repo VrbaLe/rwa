@@ -1,0 +1,72 @@
+<section class="page">
+  @if (user$ | async; as user) {
+    <h1>Moj profil</h1>
+    <p class="muted">
+      {{ user.email }} · {{ (isOwner$ | async) ? 'Vlasnik salona' : 'Korisnik' }}
+    </p>
+
+    @if (isOwner$ | async) {
+      <div class="tabs">
+        <button type="button" [class.active]="tab === 'salons'" (click)="setTab('salons')">Moji saloni</button>
+        <button type="button" [class.active]="tab === 'ownerAppointments'" (click)="setTab('ownerAppointments')">Termini u mojim salonima</button>
+        <button type="button" [class.active]="tab === 'profile'" (click)="setTab('profile')">Moj profil</button>
+      </div>
+
+      @switch (tab) {
+        @case ('salons') {
+          <a routerLink="/salons/new" class="btn add">+ Dodaj salon</a>
+          <div class="grid">
+            @for (salon of mySalons$ | async; track salon.id) {
+              <app-salon-card
+                [salon]="salon"
+                [deletable]="true"
+                (selected)="openSalon($event)"
+                (remove)="removeSalon($event)" />
+            } @empty {
+              <p class="muted">Još nemaš nijedan salon.</p>
+            }
+          </div>
+        }
+        @case ('ownerAppointments') {
+          <app-appointment-list [appointments]="(ownerAppointments$ | async) ?? []" />
+        }
+        @case ('profile') {
+          @if (currentOwner$ | async; as owner) {
+            <app-owner-profile-form [owner]="owner" (save)="saveProfile(owner.id, $event)" />
+          } @else {
+            <p class="muted">Učitavanje...</p>
+          }
+        }
+      }
+    } @else {
+      <div class="tabs">
+        <button type="button" [class.active]="tab === 'appointments'" (click)="setTab('appointments')">Moji termini</button>
+        <button type="button" [class.active]="tab === 'reviews'" (click)="setTab('reviews')">Moje recenzije</button>
+      </div>
+
+      @switch (tab) {
+        @case ('appointments') {
+          <app-appointment-list
+            [appointments]="(myAppointments$ | async) ?? []"
+            [canCancel]="true"
+            (cancelAppointment)="cancelAppointment($event)" />
+        }
+        @case ('reviews') {
+          @for (review of myReviews$ | async; track review.id) {
+            <div class="review">
+              <div>
+                <strong>{{ review.salonName }}</strong>
+                <app-star-rating [value]="review.rate" />
+                <p>{{ review.comment }}</p>
+                <span class="muted">{{ review.created_at | date: 'dd.MM.yyyy' }}</span>
+              </div>
+              <button type="button" class="btn btn-danger" (click)="removeReview(review)">Obriši</button>
+            </div>
+          } @empty {
+            <p class="muted">Još nisi ostavio nijednu recenziju.</p>
+          }
+        }
+      }
+    }
+  }
+</section>

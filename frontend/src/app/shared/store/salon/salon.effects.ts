@@ -10,6 +10,9 @@ import {
   addReview,
   addReviewFailure,
   addReviewSuccess,
+  deleteReview,
+  deleteReviewFailure,
+  deleteReviewSuccess,
   addSalon,
   addSalonFailure,
   addSalonSuccess,
@@ -133,6 +136,20 @@ export class SalonEffects {
           }),
           catchError(error =>
             of(addReviewFailure({ error: error.error?.message ?? "Greška pri slanju recenzije" }))
+          )
+        )
+      )
+    )
+  );
+
+    deleteReview = createEffect(() =>
+    this.actions$.pipe(
+      ofType(deleteReview),
+      mergeMap(action =>
+        this.reviewService.deleteReview(action.review_id).pipe(
+          map(() => deleteReviewSuccess({ review_id: action.review_id, salon_id: action.salon_id })),
+          catchError(error =>
+            of(deleteReviewFailure({ error: error.error?.message ?? "Greška pri brisanju recenzije" }))
           )
         )
       )

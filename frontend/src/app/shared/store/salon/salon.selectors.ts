@@ -40,6 +40,7 @@ const comparators: Record<
   (a: SalonViewDto, b: SalonViewDto) => number
 > = {
   rating: (a, b) => a.avgRating - b.avgRating,
+  reviews: (a, b) => a.reviewCount - b.reviewCount,
   name: (a, b) => a.name.localeCompare(b.name),
   newest: (a, b) => a.id - b.id,
 };
@@ -56,6 +57,7 @@ export const selectFilteredSalons = createSelector(
       .filter((salon) => !city || (salon.city ?? '').toLowerCase().includes(city))
       .filter((salon) => !filters.category || salon.category === filters.category)
       .filter((salon) => !search || salon.name.toLowerCase().includes(search))
+      .filter((salon) => salon.avgRating >= filters.minRating)
       .sort((a, b) => comparators[filters.sortBy](a, b) * direction);
   },
 );

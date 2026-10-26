@@ -1,0 +1,64 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+}
+
+.brand {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.account { position: relative; }
+
+.icon-btn {
+  display: flex;
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: #fff;
+  color: var(--text);
+  cursor: pointer;
+
+  &:hover { background: #f0ecff; }
+}
+
+.menu {
+  position: absolute;
+  right: 0;
+  top: 46px;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+  z-index: 10;
+
+  .menu-header {
+    padding: 10px 14px;
+    color: var(--muted);
+    font-size: 0.85rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  a, button {
+    padding: 10px 14px;
+    text-align: left;
+    text-decoration: none;
+    border: none;
+    background: none;
+    font: inherit;
+    cursor: pointer;
+    color: var(--text);
+
+    &:hover { background: #f5f3ff; }
+  }
+}

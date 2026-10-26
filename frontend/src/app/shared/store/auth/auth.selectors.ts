@@ -17,3 +17,4 @@ export const selectAuthSuccess = createSelector(
     selectAuthState,
     (authState) => authState.user
 );
+

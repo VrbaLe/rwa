@@ -1,0 +1,8 @@
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 420px;
+
+  .avatar { width: 96px; height: 96px; border-radius: 50%; object-fit: cover; }
+}

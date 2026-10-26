@@ -1,0 +1,14 @@
+@for (review of reviews; track review.id) {
+  <div class="review">
+    <div class="head">
+      <app-star-rating [value]="review.rate" />
+      <span class="muted">{{ review.created_at | date: 'dd.MM.yyyy' }}</span>
+    </div>
+    <p>{{ review.comment }}</p>
+    @if (isMine(review)) {
+      <button type="button" class="btn btn-danger" (click)="remove.emit(review.id)">Obriši</button>
+    }
+  </div>
+} @empty {
+  <p class="muted">Još nema recenzija.</p>
+}

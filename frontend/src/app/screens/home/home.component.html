@@ -1,0 +1,63 @@
+<section class="page">
+  <div class="header">
+    <h1>Saloni</h1>
+    @if (isOwner$ | async) {
+      <a routerLink="/salons/new" class="btn">+ Dodaj salon</a>
+    }
+  </div>
+
+  <form [formGroup]="filterForm" class="filters">
+    <input formControlName="search" placeholder="Pretraga po imenu" />
+
+    <select formControlName="city">
+      <option value="">Svi gradovi</option>
+      @for (city of cities$ | async; track city) {
+        <option [value]="city">{{ city }}</option>
+      }
+    </select>
+
+    <select formControlName="category">
+      <option value="">Sve kategorije</option>
+      @for (category of categories; track category.value) {
+        <option [value]="category.value">{{ category.label }}</option>
+      }
+    </select>
+
+    <select formControlName="minRating">
+      <option [ngValue]="0">Sve ocene</option>
+      <option [ngValue]="3">Ocena 3 i više</option>
+      <option [ngValue]="4">Ocena 4 i više</option>
+      <option [ngValue]="4.5">Ocena 4.5 i više</option>
+    </select>
+
+    <select formControlName="sortBy">
+      <option value="rating">Sortiraj po oceni</option>
+      <option value="reviews">Sortiraj po broju recenzija</option>
+      <option value="name">Sortiraj po imenu</option>
+      <option value="newest">Sortiraj po datumu dodavanja</option>
+    </select>
+
+    <select formControlName="order">
+      <option value="DESC">Opadajuće</option>
+      <option value="ASC">Rastuće</option>
+    </select>
+
+    <button type="button" class="btn btn-outline" (click)="reset()">Poništi filtere</button>
+  </form>
+
+  @if (loading$ | async) {
+    <p class="muted">Učitavanje...</p>
+  }
+
+  @if (error$ | async; as error) {
+    <p class="error">{{ error }}</p>
+  }
+
+  <div class="grid">
+    @for (salon of salons$ | async; track salon.id) {
+      <app-salon-card [salon]="salon" (selected)="openSalon($event)" />
+    } @empty {
+      <p class="muted">Nema salona za izabrane filtere.</p>
+    }
+  </div>
+</section>

@@ -13,3 +13,4 @@ export const selectUserData = createSelector(selectUserState, (state) => state.u
 export const selectUserDataLoaded = createSelector(selectUserState, (state) => state.userDataLoaded);
 export const selectUserError = createSelector(selectUserState, (state) => state.error);
 export const selectCurrentOwnerId = createSelector(selectUserData, (user) => user?.owner?.id ?? null);
+export const selectIsLoggedIn = createSelector(selectCurrentUser, (user) => user !== null);

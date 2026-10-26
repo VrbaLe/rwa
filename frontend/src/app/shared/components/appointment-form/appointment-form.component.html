@@ -1,0 +1,32 @@
+<form [formGroup]="form" (ngSubmit)="submit()" class="appointment-form">
+  <h4>Zakaži termin</h4>
+
+  <input type="date" formControlName="appointmentDate" [min]="today" />
+
+  @if (form.controls.appointmentDate.value) {
+    @if (bookedSlots$ | async; as booked) {
+      <div class="slots">
+        @for (slot of slots; track slot) {
+          <button
+            type="button"
+            class="slot"
+            [class.selected]="form.controls.timeSlot.value === slot"
+            [disabled]="booked.includes(slot)"
+            (click)="selectSlot(slot)">
+            {{ slot }}
+          </button>
+        }
+      </div>
+    }
+  }
+
+  @if (submitted && (added$ | async)) {
+    <p class="success">Termin je zakazan.</p>
+  }
+
+  @if (error$ | async; as error) {
+    <p class="error">{{ error }}</p>
+  }
+
+  <button type="submit" class="btn" [disabled]="form.invalid || (loading$ | async)">Zakaži</button>
+</form>

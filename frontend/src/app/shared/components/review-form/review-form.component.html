@@ -1,0 +1,13 @@
+<form [formGroup]="form" (ngSubmit)="submit()" class="review-form">
+  <h4>Ostavi recenziju</h4>
+
+  <app-star-rating [value]="form.controls.rate.value" [interactive]="true" (valueChange)="setRate($event)" />
+
+  <textarea formControlName="comment" rows="3" placeholder="Vaš komentar"></textarea>
+
+  @if (error$ | async; as error) {
+    <p class="error">{{ error }}</p>
+  }
+
+  <button type="submit" class="btn" [disabled]="form.invalid">Pošalji</button>
+</form>

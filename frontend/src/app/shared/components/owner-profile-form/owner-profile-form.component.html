@@ -1,0 +1,16 @@
+<form [formGroup]="form" (ngSubmit)="submit()" class="profile-form">
+  @if (owner?.picture) {
+    <img class="avatar" [src]="owner?.picture" alt="Profilna slika" />
+  }
+
+  <input formControlName="firstName" placeholder="Ime" />
+  <input formControlName="lastName" placeholder="Prezime" />
+  <textarea formControlName="about" rows="3" placeholder="O meni"></textarea>
+  <input formControlName="instagram" placeholder="Instagram" />
+  <input formControlName="linkedin" placeholder="LinkedIn" />
+
+  <label class="muted">Nova profilna slika (opciono)</label>
+  <input type="file" accept="image/*" (change)="onFile($event)" />
+
+  <button type="submit" class="btn" [disabled]="form.invalid || saving">Sačuvaj</button>
+</form>

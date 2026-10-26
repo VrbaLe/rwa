@@ -1,0 +1,68 @@
+@if (salon$ | async; as salon) {
+  <section class="page">
+    <div class="top">
+      <img class="hero" [src]="salon.image" [alt]="salon.name" />
+
+      <div class="info">
+        <h1>{{ salon.name }}</h1>
+
+        <div class="rating">
+          <app-star-rating [value]="salon.avgRating" />
+          {{ salon.avgRating | number: '1.1-1' }} ({{ salon.reviewCount }} recenzija)
+        </div>
+
+        <p class="muted">{{ salon.city || 'Grad nije unet' }} · {{ categoryLabel(salon.category) }}</p>
+        <p>{{ salon.description }}</p>
+
+        @if (salon.tags) {
+          <div class="tags">
+            @for (tag of salon.tags.split(','); track tag) {
+              <span class="tag">{{ tag.trim() }}</span>
+            }
+          </div>
+        }
+
+        @if (salon.owner) {
+          <p class="muted">
+            Vlasnik: {{ salon.owner.firstName }} {{ salon.owner.lastName }}
+            @if (salon.owner.instagram) {
+              · {{ salon.owner.instagram }}
+            }
+          </p>
+        }
+      </div>
+    </div>
+
+    <div class="columns">
+      <div>
+        @if (isLoggedIn$ | async) {
+          <app-appointment-form [salonId]="salon.id" />
+        } @else {
+          <div class="notice">
+            Za zakazivanje termina morate biti prijavljeni.
+            <a routerLink="/login">Prijavi se</a> ili <a routerLink="/register">registruj se</a>.
+          </div>
+        }
+      </div>
+
+      <div>
+        <h3>Recenzije</h3>
+        <app-review-list
+          [reviews]="salon.reviews"
+          [currentUserId]="userId$ | async"
+          (remove)="removeReview($event)" />
+
+        @if (isLoggedIn$ | async) {
+          <app-review-form [salonId]="salon.id" />
+        } @else {
+          <div class="notice">
+            Za ostavljanje recenzije morate biti prijavljeni.
+            <a routerLink="/login">Prijavi se</a>.
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+} @else {
+  <p class="page muted">Učitavanje...</p>
+}

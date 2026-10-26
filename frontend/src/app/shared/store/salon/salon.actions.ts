@@ -81,3 +81,17 @@ export const addReviewFailure = createAction(
     '[Salon] Add Review Failure',
     props<{error: string}>()
 );
+
+//OBRISI RECENZIJU
+export const deleteReview = createAction(
+    '[Salon] Delete Review',
+    props<{review_id: number, salon_id: number}>()
+);
+export const deleteReviewSuccess = createAction(
+    '[Salon] Delete Review Success',
+    props<{review_id: number, salon_id: number}>()
+);
+export const deleteReviewFailure = createAction(
+    '[Salon] Delete Review Failure',
+    props<{error: string}>()
+);

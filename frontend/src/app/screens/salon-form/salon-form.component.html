@@ -1,0 +1,30 @@
+<form [formGroup]="form" (ngSubmit)="submit()" class="form">
+  <h2>Novi salon</h2>
+
+  <input formControlName="name" placeholder="Naziv salona" />
+  <textarea formControlName="description" rows="3" placeholder="Opis"></textarea>
+
+  <select formControlName="category">
+    @for (category of categories; track category.value) {
+      <option [value]="category.value">{{ category.label }}</option>
+    }
+  </select>
+
+  <input formControlName="city" placeholder="Grad" list="cities" />
+  <datalist id="cities">
+    @for (city of cities$ | async; track city) {
+      <option [value]="city"></option>
+    }
+  </datalist>
+
+  <input formControlName="tags" placeholder="Tagovi (odvojeni zarezom)" />
+
+  <label class="muted">Slika salona</label>
+  <input type="file" accept="image/*" (change)="onFile($event)" />
+
+  @if (error$ | async; as error) {
+    <p class="error">{{ error }}</p>
+  }
+
+  <button type="submit" class="btn" [disabled]="form.invalid || !file || (loading$ | async)">Sačuvaj salon</button>
+</form>

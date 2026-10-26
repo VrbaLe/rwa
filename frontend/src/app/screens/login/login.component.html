@@ -1,0 +1,14 @@
+<form [formGroup]="form" (ngSubmit)="submit()" class="form">
+  <h2>Prijava</h2>
+
+  <input formControlName="username" placeholder="Email" />
+  <input formControlName="password" type="password" placeholder="Lozinka" />
+
+  @if (error$ | async; as error) {
+    <p class="error">{{ error }}</p>
+  }
+
+  <button type="submit" class="btn" [disabled]="form.invalid">Prijavi se</button>
+
+  <p class="muted">Nemaš nalog? <a routerLink="/register">Registruj se</a></p>
+</form>

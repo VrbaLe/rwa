@@ -6,6 +6,8 @@ import { SalonFilterDto } from '../../dtos/salon-filter.dto';
 import {
     addReviewFailure,
     addReviewSuccess,
+    deleteReviewFailure,
+    deleteReviewSuccess,
     addSalon,
     addSalonFailure,
     addSalonSuccess,
@@ -40,6 +42,7 @@ export const initialFilters: SalonFilterDto = {
     city: '',
     category: '',
     search: '',
+    minRating: 0,
     sortBy: 'rating',
     order: 'DESC'
 };
@@ -158,6 +161,22 @@ export const salonReducer = createReducer(
         );
     }),
     on(addReviewFailure, (state, { error }) => ({
+        ...state,
+        error: error
+    })),
+
+        // OBRISI RECENZIJU
+    on(deleteReviewSuccess, (state, { review_id, salon_id }) => {
+        const salon = state.entities[salon_id];
+        if (!salon) {
+            return state;
+        }
+        return salonAdapter.updateOne(
+            { id: salon_id, changes: { reviews: salon.reviews.filter(review => review.id !== review_id) } },
+            state
+        );
+    }),
+    on(deleteReviewFailure, (state, { error }) => ({
         ...state,
         error: error
     }))

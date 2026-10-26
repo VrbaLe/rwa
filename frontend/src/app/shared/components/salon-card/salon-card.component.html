@@ -1,0 +1,21 @@
+<div class="card" (click)="onClick()">
+  <img [src]="salon.image" [alt]="salon.name" />
+
+  <div class="info">
+    <h3>{{ salon.name }}</h3>
+    <p class="meta">{{ salon.city || 'Grad nije unet' }} · {{ salon.category }}</p>
+
+    @if (salon.owner) {
+      <p class="meta">{{ salon.owner.firstName }} {{ salon.owner.lastName }}</p>
+    }
+
+    <p class="rating">
+      <app-star-rating [value]="salon.avgRating" />
+      {{ salon.avgRating | number: '1.1-1' }} ({{ salon.reviewCount }})
+    </p>
+
+    @if (deletable) {
+      <button type="button" class="btn btn-danger" (click)="onRemove($event)">Obriši</button>
+    }
+  </div>
+</div>
