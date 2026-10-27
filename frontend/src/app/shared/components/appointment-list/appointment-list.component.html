@@ -1,4 +1,4 @@
-@for (appointment of appointments; track appointment.id) {
+<!-- @for (appointment of appointments; track appointment.id) {
   <div class="row">
     <div>
       <strong>{{ appointment.salonName || 'Salon' }}</strong>
@@ -10,6 +10,40 @@
     @if (canCancel) {
       <button type="button" class="btn btn-danger" (click)="cancelAppointment.emit(appointment.id)">Otkaži</button>
     }
+  </div>
+} @empty {
+  <p class="muted">Nema termina.</p>
+}
+  -->
+
+
+  
+@for (appointment of appointments; track appointment.id) {
+  <div class="row">
+    <div class="appointment-info">
+      <strong>{{ appointment.salonName || 'Salon' }}</strong>
+
+      <div class="muted">
+        {{ appointment.appointmentDate | date: 'dd.MM.yyyy' }}
+        u {{ appointment.timeSlot }}
+      </div>
+    </div>
+
+    <div class="appointment-actions">
+      <span class="client-name">
+        {{ appointment.clientName || 'Nepoznat korisnik' }}
+      </span>
+
+      @if (canCancel) {
+        <button
+          type="button"
+          class="btn btn-danger"
+          (click)="cancelAppointment.emit(appointment.id)"
+        >
+          Otkaži
+        </button>
+      }
+    </div>
   </div>
 } @empty {
   <p class="muted">Nema termina.</p>

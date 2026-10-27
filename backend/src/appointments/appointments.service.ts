@@ -47,9 +47,14 @@ export class AppointmentsService {
     );
   }
 
-  findAll() {
-    return `This action returns all appointments`;
+  findAll(): Observable<Appointment[]> {
+    return from(
+      this.appointmentRepository.find({
+        relations: ['salon', 'client'],
+      }),
+    );
   }
+
 
   findOne(id: number) {
     return `This action returns a #${id} appointment`;

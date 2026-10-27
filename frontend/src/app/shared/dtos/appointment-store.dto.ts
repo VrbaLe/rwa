@@ -5,4 +5,6 @@ export interface AppointmentStoreDto {
   created_at: string;
   salonId: number | null;
   clientId: number | null;
+  salonName: string;
+  clientName: string;
 }

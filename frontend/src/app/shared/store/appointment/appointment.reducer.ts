@@ -39,7 +39,9 @@ const toStoreDto = (appointment: AppointmentDto): AppointmentStoreDto => ({
     timeSlot: appointment.timeSlot.slice(0, 5),
     created_at: appointment.created_at,
     salonId: appointment.salon?.id ?? null,
-    clientId: appointment.client?.id ?? null
+    clientId: appointment.client?.id ?? null,
+    salonName: appointment.salon?.name ?? 'Salon',
+    clientName: appointment.client?.email ?? 'Nepoznat korisnik'
 });
 
 export const appointmentReducer = createReducer(
