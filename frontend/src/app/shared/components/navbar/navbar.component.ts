@@ -3,7 +3,7 @@ import { AsyncPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { logout } from '../../store/auth/auth.actions';
-import { selectCurrentUser, selectIsOwner } from '../../store/user/user.selectors';
+import { selectCurrentUser, selectIsOwner, selectUserData } from '../../store/user/user.selectors';
 
 @Component({
   selector: 'app-navbar',
@@ -16,6 +16,7 @@ export class NavbarComponent {
     open = false;
 
     user$ = this.store.select(selectCurrentUser);
+    userData$ = this.store.select(selectUserData);
     isOwner$ = this.store.select(selectIsOwner);
 
     constructor(
