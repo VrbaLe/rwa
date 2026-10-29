@@ -36,6 +36,7 @@ export class SalonService {
         salon.description = salonData.description;
         salon.image = salonData.image;
         salon.category = salonData.category;
+        salon.city = salonData.city;
         salon.tags = salonData.tags;
         salon.owner = owner;
 

@@ -2,7 +2,7 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { Observable, Subject, of, startWith, switchMap, take, takeUntil } from 'rxjs';
+import { Observable, Subject, of, startWith, merge, filter, switchMap, take, takeUntil } from 'rxjs';
 import { TIME_SLOTS } from '../../local-lists/time-slots.list';
 import { createAppointment } from '../../store/appointment/appointment.actions';
 import {
@@ -29,10 +29,11 @@ export class AppointmentFormComponent implements OnInit, OnDestroy {
   slots = TIME_SLOTS;
   submitted = false;
 
-  added$ = this.store.select(selectAppointmentAdded);
-  loading$ = this.store.select(selectAppointmentsLoading);
-  error$ = this.store.select(selectAppointmentsError);
+  added$: Observable<boolean> = this.store.select(selectAppointmentAdded);
+  loading$: Observable<boolean> = this.store.select(selectAppointmentsLoading);
+  error$: Observable<string | null> = this.store.select(selectAppointmentsError);
   bookedSlots$!: Observable<string[]>;
+
 
   form = this.fb.nonNullable.group({
     appointmentDate: ['', [Validators.required]],
@@ -56,8 +57,16 @@ export class AppointmentFormComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$)
     );
 
-    // promena datuma ponistava izabrano vreme
-    dateControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
+    // // promena datuma ponistava izabrano vreme
+    // dateControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
+    //   this.form.controls.timeSlot.setValue('');
+    // });
+
+    // izabrano vreme se brise kad se promeni datum ili kad se termin uspesno zakaze
+    merge(
+      dateControl.valueChanges,
+      this.added$.pipe(filter(added => added))
+    ).pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.form.controls.timeSlot.setValue('');
     });
   }
