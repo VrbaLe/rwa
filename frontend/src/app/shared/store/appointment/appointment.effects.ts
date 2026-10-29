@@ -74,6 +74,13 @@ export class AppointmentEffects {
     )
   );
 
+  reloadAfterFailedCreate = createEffect(() =>
+    this.actions$.pipe(
+      ofType(createAppointmentFailure),
+      map(() => loadAppointments())
+    )
+  );
+  
   constructor(
     private actions$: Actions,
     private appointmentService: AppointmentService

@@ -13,5 +13,5 @@ export class AppointmentListComponent {
   @Input() appointments: AppointmentViewDto[] = [];
   @Input() canCancel = false;
   @Output() cancelAppointment = new EventEmitter<number>();
-
+  @Input() showClient = false;
 }

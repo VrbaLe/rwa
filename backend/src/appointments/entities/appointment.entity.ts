@@ -1,8 +1,9 @@
 import { Salon } from "src/salon/entities/salon.entity";
 import { User } from "src/user/entities/user.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, Unique} from "typeorm";
 
 @Entity()
+@Unique(['salon', 'appointmentDate', 'timeSlot'])
 export class Appointment {
     @PrimaryGeneratedColumn()
     id:number;

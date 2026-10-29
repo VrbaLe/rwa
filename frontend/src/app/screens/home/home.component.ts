@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -6,6 +7,7 @@ import { Store } from '@ngrx/store';
 import { Subject, debounceTime, distinctUntilChanged, take, takeUntil } from 'rxjs';
 import { SalonCardComponent } from '../../shared/components/salon-card/salon-card.component';
 import { SalonFilterDto } from '../../shared/dtos/salon-filter.dto';
+import { SalonViewDto } from '../../shared/dtos/salon-view.dto';
 import { CATEGORIES } from '../../shared/local-lists/categories.list';
 import { initialFilters } from '../../shared/store/salon/salon.reducer';
 import { loadSalons, resetFilters, setFilters } from '../../shared/store/salon/salon.actions';
@@ -31,11 +33,16 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   categories = CATEGORIES;
 
-  salons$ = this.store.select(selectFilteredSalons);
-  cities$ = this.store.select(selectCities);
-  loading$ = this.store.select(selectSalonLoading);
-  error$ = this.store.select(selectSalonError);
-  isOwner$ = this.store.select(selectIsOwner);
+  // salons$ = this.store.select(selectFilteredSalons);
+  // cities$ = this.store.select(selectCities);
+  // loading$ = this.store.select(selectSalonLoading);
+  // error$ = this.store.select(selectSalonError);
+  // isOwner$ = this.store.select(selectIsOwner);
+  salons$: Observable<SalonViewDto[]> = this.store.select(selectFilteredSalons);
+  cities$: Observable<string[]> = this.store.select(selectCities);
+  loading$: Observable<boolean> = this.store.select(selectSalonLoading);
+  error$: Observable<string | null> = this.store.select(selectSalonError);
+  isOwner$: Observable<boolean> = this.store.select(selectIsOwner);
 
   filterForm = this.fb.nonNullable.group({
     search: [initialFilters.search],
