@@ -1,3 +1,7 @@
-.star { color: #d0d3da; font-size: 1.1rem; }
-.filled { color: #f5b301; }
+// .star { color: #d0d3da; font-size: 1.1rem; }
+// .filled { color: #f5b301; }
+// .interactive .star { cursor: pointer; font-size: 1.6rem; }
+
+.star { color: var(--star-off); font-size: 1.1rem; }
+.filled { color: var(--accent); }
 .interactive .star { cursor: pointer; font-size: 1.6rem; }

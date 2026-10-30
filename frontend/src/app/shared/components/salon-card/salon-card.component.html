@@ -1,4 +1,4 @@
-<div class="card" (click)="onClick()">
+<!-- <div class="card" (click)="onClick()">
   <img [src]="salon.image" [alt]="salon.name" />
 
   <div class="info">
@@ -18,4 +18,27 @@
       <button type="button" class="btn btn-danger" (click)="onRemove($event)">Obriši</button>
     }
   </div>
-</div>
+</div> -->
+
+<article class="card" (click)="onClick()">
+  <div class="media">
+    <img [src]="salon.image" [alt]="salon.name" />
+    <span class="badge rating">
+      ★ {{ salon.avgRating | number: '1.1-1' }}<small>({{ salon.reviewCount }})</small>
+    </span>
+    <span class="badge category">{{ categoryLabel }}</span>
+  </div>
+
+  <div class="info">
+    <h3>{{ salon.name }}</h3>
+    <p class="meta">{{ salon.city || 'Grad nije unet' }}</p>
+
+    @if (salon.owner) {
+      <p class="meta">Vlasnik: {{ salon.owner.firstName }} {{ salon.owner.lastName }}</p>
+    }
+
+    @if (deletable) {
+      <button type="button" class="btn btn-danger" (click)="onRemove($event)">Obriši</button>
+    }
+  </div>
+</article>

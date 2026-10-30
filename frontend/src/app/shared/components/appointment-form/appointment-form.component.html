@@ -13,7 +13,7 @@
             [class.selected]="form.controls.timeSlot.value === slot"
             [disabled]="booked.includes(slot)"
             (click)="selectSlot(slot)">
-            {{ slot }}
+            <span>{{ slot }}</span>
           </button>
         }
       </div>

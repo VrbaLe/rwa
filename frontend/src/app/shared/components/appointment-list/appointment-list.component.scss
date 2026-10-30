@@ -1,7 +1,19 @@
+// // .row {
+// //   display: flex;
+// //   justify-content: space-between;
+// //   align-items: center;
+// //   padding: 12px 16px;
+// //   margin-bottom: 8px;
+// //   background: #fff;
+// //   border: 1px solid var(--border);
+// //   border-radius: 10px;
+// // }
+
 // .row {
 //   display: flex;
 //   justify-content: space-between;
 //   align-items: center;
+//   gap: 16px;
 //   padding: 12px 16px;
 //   margin-bottom: 8px;
 //   background: #fff;
@@ -9,31 +21,31 @@
 //   border-radius: 10px;
 // }
 
+// .appointment-info {
+//   display: flex;
+//   flex-direction: column;
+//   gap: 4px;
+// }
+
+// .appointment-actions {
+//   display: flex;
+//   align-items: center;
+//   gap: 16px;
+// }
+
+// .client-name {
+//   color: var(--text-muted, #666);
+//   font-size: 14px;
+// }
 .row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 16px;
-  padding: 12px 16px;
-  margin-bottom: 8px;
-  background: #fff;
+  padding: 14px 18px;
+  margin-bottom: 10px;
+  background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 12px;
 }
 
-.appointment-info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.appointment-actions {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.client-name {
-  color: var(--text-muted, #666);
-  font-size: 14px;
-}
+.client { margin-top: 4px; font-size: 0.9rem; color: var(--accent); }

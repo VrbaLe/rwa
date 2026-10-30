@@ -80,7 +80,13 @@ export class AppointmentEffects {
       map(() => loadAppointments())
     )
   );
-  
+
+  reloadAfterSuccessfulCreate = createEffect(() =>
+    this.actions$.pipe(
+        ofType(createAppointmentSuccess),
+        map(() => loadAppointments())
+    )
+  );
   constructor(
     private actions$: Actions,
     private appointmentService: AppointmentService

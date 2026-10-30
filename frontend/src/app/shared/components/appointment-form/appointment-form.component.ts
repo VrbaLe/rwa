@@ -57,6 +57,16 @@ export class AppointmentFormComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$)
     );
 
+//     this.bookedSlots$.pipe(
+//   takeUntil(this.destroy$)
+// ).subscribe((slots: string[]) => {
+//   console.log('SLOTOVI:', this.slots);
+// console.log('POREĐENJE:', this.slots.map(slot => ({
+//   slot,
+//   zauzet: slots.includes(slot)
+// })));
+// });
+
     // // promena datuma ponistava izabrano vreme
     // dateControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
     //   this.form.controls.timeSlot.setValue('');
@@ -95,6 +105,8 @@ export class AppointmentFormComponent implements OnInit, OnDestroy {
       }));
     });
   }
+
+  
 
   ngOnDestroy(): void {
     this.destroy$.next();

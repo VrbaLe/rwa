@@ -43,10 +43,22 @@ export const selectAppointmentsBySalon = (salonId: number) =>
     appointments.filter((appointment) => appointment.salonId === salonId),
   );
 
+// // ZAUZETI TERMINI JEDNOG SALONA ZA JEDAN DATUM
+// export const selectBookedSlots = (salonId: number, date: string) =>
+//   createSelector(selectAppointmentsBySalon(salonId), (appointments) =>
+//     appointments
+//       .filter((appointment) => appointment.appointmentDate === date)
+//       .map((appointment) => appointment.timeSlot),
+//   );
 // ZAUZETI TERMINI JEDNOG SALONA ZA JEDAN DATUM
 export const selectBookedSlots = (salonId: number, date: string) =>
-  createSelector(selectAppointmentsBySalon(salonId), (appointments) =>
-    appointments
-      .filter((appointment) => appointment.appointmentDate === date)
-      .map((appointment) => appointment.timeSlot),
+  createSelector(
+    selectAppointmentsBySalon(salonId),
+    (appointments) =>
+      appointments
+        .filter(
+          (appointment) =>
+            appointment.appointmentDate.slice(0, 10) === date
+        )
+        .map((appointment) => appointment.timeSlot.slice(0, 5))
   );
