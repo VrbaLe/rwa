@@ -13,6 +13,7 @@ import { loadAppointments } from '../../shared/store/appointment/appointment.act
 import { deleteReview, loadSalon } from '../../shared/store/salon/salon.actions';
 import { selectSalonById } from '../../shared/store/salon/salon.selectors';
 import { selectIsLoggedIn, selectUserId } from '../../shared/store/user/user.selectors';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-salon-details',
@@ -40,7 +41,8 @@ export class SalonDetailsComponent implements OnInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute,
-    private store: Store
+    private store: Store,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
@@ -61,6 +63,13 @@ export class SalonDetailsComponent implements OnInit, OnDestroy {
 
   removeReview(reviewId: number): void {
     this.store.dispatch(deleteReview({ review_id: reviewId, salon_id: this.salonId }));
+  }
+
+  getMapUrl(address: string, city?: string): SafeResourceUrl {
+    const location = [address, city].filter(Boolean).join(', ');
+    const url = `https://maps.google.com/maps?q=${encodeURIComponent(location)}&output=embed`;
+
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
   ngOnDestroy(): void {

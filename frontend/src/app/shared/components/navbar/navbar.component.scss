@@ -109,6 +109,14 @@
   &:hover { border-color: var(--accent); color: var(--accent); }
 }
 
+.profile-image {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
 .menu {
   position: absolute;
   right: 0;
@@ -142,4 +150,6 @@
 
     &:hover { background: var(--accent-soft); color: var(--accent); }
   }
+
+ 
 }

@@ -37,6 +37,7 @@ export class SalonService {
         salon.image = salonData.image;
         salon.category = salonData.category;
         salon.city = salonData.city;
+        salon.address = salonData.address;
         salon.tags = salonData.tags;
         salon.owner = owner;
 
@@ -60,6 +61,7 @@ export class SalonService {
             image: salon.image,
             category: salon.category,
             city: salon.city,
+            address: salon.address,
             tags: salon.tags,
             reviews: (salon.reviews ?? []).map(r => ({
               id: r.id,

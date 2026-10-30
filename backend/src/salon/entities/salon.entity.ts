@@ -26,6 +26,9 @@ export class Salon {
 
     @Column({ nullable: true })
     city: string;
+
+    @Column({ nullable: true })
+    address: string;
     
     @ManyToOne(() => Owner, (owner) => owner.salons , {eager: true})
     owner: Owner;

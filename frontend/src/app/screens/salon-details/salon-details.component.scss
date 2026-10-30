@@ -41,3 +41,22 @@
 
   a { color: var(--accent); }
 }
+
+.location {
+  margin-top: 32px;
+
+  h3 {
+    margin-bottom: 12px;
+  }
+
+  p {
+    margin-bottom: 16px;
+  }
+
+  iframe {
+    display: block;
+    width: 100%;
+    border: 1px solid var(--border) !important;
+    border-radius: 12px;
+  }
+}

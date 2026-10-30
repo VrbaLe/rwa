@@ -2,7 +2,7 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { Observable, Subject, of, startWith, merge, filter, switchMap, take, takeUntil } from 'rxjs';
+import { Observable, Subject, of, startWith, merge, filter, switchMap, take, takeUntil, defer } from 'rxjs';
 import { TIME_SLOTS } from '../../local-lists/time-slots.list';
 import { createAppointment } from '../../store/appointment/appointment.actions';
 import {
@@ -48,15 +48,17 @@ export class AppointmentFormComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     const dateControl = this.form.controls.appointmentDate;
 
-    // kad se promeni datum, ponovo izracunaj zauzete termine
-    this.bookedSlots$ = dateControl.valueChanges.pipe(
-      startWith(dateControl.value),
-      switchMap(date =>
-        date ? this.store.select(selectBookedSlots(this.salonId, date)) : of([] as string[])
-      ),
-      takeUntil(this.destroy$)
-    );
-
+   this.bookedSlots$ = defer(() =>
+  dateControl.valueChanges.pipe(
+    startWith(dateControl.value),
+    switchMap(date =>
+      date
+        ? this.store.select(selectBookedSlots(this.salonId, date))
+        : of([] as string[])
+    ),
+    takeUntil(this.destroy$)
+  )
+);
 //     this.bookedSlots$.pipe(
 //   takeUntil(this.destroy$)
 // ).subscribe((slots: string[]) => {

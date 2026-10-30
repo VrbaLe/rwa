@@ -26,6 +26,7 @@ export class SalonFormComponent {
     description: ['', [Validators.required]],
     category: [CATEGORIES[0].value, [Validators.required]],
     city: ['', [Validators.required]],
+    address: ['', [Validators.required]],
     tags: ['']
   });
 

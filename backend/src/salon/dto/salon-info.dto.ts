@@ -8,5 +8,6 @@ export class SalonInfo {
     image: string;
     category: string;    
     city: string;
+    address?: string;
     tags?: string;
 }
