@@ -1,4 +1,4 @@
-import { Injectable, ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
+import { Injectable, ConflictException, ForbiddenException, NotFoundException, BadRequestException } from '@nestjs/common';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 import { AppointmentInfo } from './dto/appointment-info.dto';
@@ -7,7 +7,8 @@ import { Appointment } from './entities/appointment.entity';
 import { DeleteResult, Repository } from 'typeorm';
 import { Salon } from 'src/salon/entities/salon.entity';
 import { User } from 'src/user/entities/user.entity';
-import { from, map, Observable, switchMap, catchError, throwError } from 'rxjs';
+import { from, map, Observable, switchMap, catchError, throwError, forkJoin, of } from 'rxjs';
+import { Treatment } from 'src/treatments/entities/treatment.entity';
 
 
 @Injectable()
@@ -21,6 +22,9 @@ export class AppointmentsService {
 
     @InjectRepository(User)
     private userRepository: Repository<User>,
+
+    @InjectRepository(Treatment)
+    private treatmentRepository: Repository<Treatment>
   ) {}
 
   // create(createAppointmentDto: CreateAppointmentDto): Observable<Appointment> {
@@ -74,6 +78,10 @@ export class AppointmentsService {
         if (!salon) {
           return throwError(() => new NotFoundException('Salon nije pronađen'));
         }
+        const problem = this.checkWorkingHours(salon, dto);
+        if (problem) {
+          return throwError(() => new BadRequestException(problem));
+        }
         return from(
           this.appointmentRepository.findOne({
             where: {
@@ -87,14 +95,18 @@ export class AppointmentsService {
             if (existing) {
               return throwError(() => new ConflictException('Termin je već zauzet'));
             }
-            return from(this.userRepository.findOneBy({ id: userId })).pipe(
-              switchMap((user) => {
+            return forkJoin({
+              user: from(this.userRepository.findOneBy({ id: userId })),
+              treatment: this.findTreatment(dto, salon.id),
+            }).pipe(
+              switchMap(({ user, treatment }) => {
                 if (!user) {
                   return throwError(() => new NotFoundException('Korisnik nije pronađen'));
                 }
                 const appointment = this.appointmentRepository.create({
                   salon,
                   client: user,
+                  treatment: treatment ?? undefined,
                   appointmentDate: dto.appointmentDate,
                   timeSlot: dto.timeSlot,
                 });
@@ -113,10 +125,46 @@ export class AppointmentsService {
     );
   }
 
+  private checkWorkingHours(salon: Salon, dto: CreateAppointmentDto): string | null {
+    const today = new Date().toISOString().slice(0, 10);
+    if (dto.appointmentDate < today) {
+      return 'Datum termina je u prošlosti';
+    }
+
+    const day = new Date(`${dto.appointmentDate}T12:00:00`).getDay();
+    const isoDay = day === 0 ? 7 : day;
+    const workingDays = (salon.workingDays ?? '1,2,3,4,5,6').split(',').map(Number);
+    if (!workingDays.includes(isoDay)) {
+      return 'Salon ne radi tog dana';
+    }
+
+    if (dto.timeSlot < salon.openTime || dto.timeSlot >= salon.closeTime) {
+      return 'Termin je van radnog vremena salona';
+    }
+    return null;
+  }
+
+  private findTreatment(dto: CreateAppointmentDto, salonId: number): Observable<Treatment | null> {
+    if (!dto.treatment_id) {
+      return of(null);
+    }
+    return from(
+      this.treatmentRepository.findOne({
+        where: { id: dto.treatment_id, salon: { id: salonId } },
+      }),
+    ).pipe(
+      switchMap((treatment) =>
+        treatment
+          ? of(treatment)
+          : throwError(() => new BadRequestException('Usluga ne pripada ovom salonu')),
+      ),
+    );
+  }
+
   findAll(userId: number): Observable<AppointmentInfo[]> {
     return from(
       this.appointmentRepository.find({
-        relations: { salon: { owner: { user: true } }, client: true },
+        relations: { salon: { owner: { user: true } }, client: true, treatment: true },
         order: { appointmentDate: 'ASC', timeSlot: 'ASC' },
       }),
     ).pipe(map((appointments) => appointments.map((a) => this.toInfo(a, userId))));
@@ -158,6 +206,9 @@ export class AppointmentsService {
         id: appointment.client.id,
         email: isClient || isSalonOwner ? appointment.client.email : undefined,
       },
+      treatment: appointment.treatment
+        ? { id: appointment.treatment.id, name: appointment.treatment.name, price: appointment.treatment.price }
+        : null,
     };
   }
 }

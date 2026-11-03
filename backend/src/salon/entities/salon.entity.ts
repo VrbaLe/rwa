@@ -3,6 +3,7 @@ import { User } from 'src/user/entities/user.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn, OneToMany,ManyToOne} from 'typeorm';
 import { Review } from 'src/reviews/entities/review.entity';
 import { Appointment } from 'src/appointments/entities/appointment.entity';
+import { Treatment } from 'src/treatments/entities/treatment.entity';
 
 @Entity()
 export class Salon {
@@ -42,4 +43,16 @@ export class Salon {
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     created_at: Date;
+
+     @Column({ default: '09:00' })
+    openTime: string;
+
+    @Column({ default: '17:00' })
+    closeTime: string;
+
+    @Column({ default: '1,2,3,4,5,6' })
+    workingDays: string;
+
+    @OneToMany(() => Treatment, (treatment) => treatment.salon)
+    treatments: Treatment[];
 }

@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, UpdateResult, Like, ILike } from 'typeorm';
 import { CreateSalonDto } from './dto/create-salon.dto';
 import { UpdateSalonDto } from './dto/update-salon.dto';
 import { Salon } from './entities/salon.entity';
-import { from, map, mergeMap, Observable, switchMap, toArray } from 'rxjs';
+import { from, map, mergeMap, Observable, switchMap, toArray, throwError } from 'rxjs';
 import { User } from 'src/user/entities/user.entity';
 import { Owner } from 'src/owner/entities/owner.entity';
 import { PaginationDto } from 'src/pagination/paginate.dto';
@@ -40,6 +40,9 @@ export class SalonService {
         salon.address = salonData.address;
         salon.tags = salonData.tags;
         salon.owner = owner;
+        salon.openTime = salonData.openTime || '09:00';
+        salon.closeTime = salonData.closeTime || '17:00';
+        salon.workingDays = salonData.workingDays || '1,2,3,4,5,6';
 
         return from(this.salonRepository.save(salon));
       }),
@@ -48,7 +51,7 @@ export class SalonService {
 
   findAll(pagination: PaginationDto): Observable<SalonInfo[]> {
     return from(this.salonRepository.find({
-       relations: ['owner','reviews'] ,
+       relations: ['owner','reviews', 'treatments'] ,
        skip: pagination.skip,
        take: pagination.limit
       })).pipe(
@@ -69,7 +72,16 @@ export class SalonService {
               comment: r.comment,
               created_at: r.created_at,
               user: r.user ? { id: r.user.id } : undefined,
-          })),
+            })),
+            openTime: salon.openTime,
+            closeTime: salon.closeTime,
+            workingDays: salon.workingDays,
+            treatments: (salon.treatments ?? []).map((treatment) => ({
+              id: treatment.id,
+              name: treatment.name,
+              price: treatment.price,
+              duration: treatment.duration,
+            })),
         }))
       )
     )
@@ -84,6 +96,36 @@ export class SalonService {
       relations: ['reviews'],
       where: { name: ILike(`${text}%`)}
     }));
+  }
+
+  update(id: number, dto: UpdateSalonDto, userId: number): Observable<SalonInfo> {
+    return from(
+      this.salonRepository.findOne({ where: { id }, relations: { owner: { user: true } } }),
+    ).pipe(
+      switchMap((salon) => {
+        if (!salon) {
+          return throwError(() => new NotFoundException('Salon nije pronađen'));
+        }
+        if (salon.owner?.user?.id !== userId) {
+          return throwError(() => new ForbiddenException('Nemate pravo da menjate ovaj salon'));
+        }
+
+        const fields = [
+          'name', 'description', 'category', 'city', 'tags',
+          'image', 'openTime', 'closeTime', 'workingDays',
+        ] as const;
+
+        fields.forEach((field) => {
+          const value = dto[field];
+          if (value !== undefined && value !== '') {
+            salon[field] = value;
+          }
+        });
+
+        return from(this.salonRepository.save(salon));
+      }),
+      switchMap((saved) => this.findOne(saved.id)),
+    );
   }
 
   deleteSalon(id: number): Observable<DeleteResult>{

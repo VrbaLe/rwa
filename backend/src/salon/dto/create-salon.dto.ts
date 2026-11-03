@@ -10,4 +10,7 @@ export class CreateSalonDto{
     city: string;
     address?: string;
     tags?: string;
+    openTime?: string;
+    closeTime?: string;
+    workingDays?: string;
 }

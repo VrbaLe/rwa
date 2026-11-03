@@ -15,6 +15,7 @@ import { AppointmentsModule } from './appointments/appointments.module';
 import { Appointment } from './appointments/entities/appointment.entity';
 import { Owner } from './owner/entities/owner.entity';
 import { Salon } from './salon/entities/salon.entity';
+import { TreatmentsModule } from './treatments/treatments.module';
 
 @Module({
   imports: [
@@ -42,7 +43,8 @@ import { Salon } from './salon/entities/salon.entity';
     SalonModule,
     OwnerModule,
     ReviewsModule,
-    AppointmentsModule
+    AppointmentsModule,
+    TreatmentsModule
   ],
   controllers: [AppController],
   providers: [AppService],

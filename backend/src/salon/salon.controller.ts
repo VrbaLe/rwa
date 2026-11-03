@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete,UseGuards, Query, UseInterceptors, UploadedFiles, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete,UseGuards, Query, UseInterceptors, UploadedFiles, Req, ParseIntPipe } from '@nestjs/common';
 import { SalonService } from './salon.service';
 import { CreateSalonDto } from './dto/create-salon.dto';
 import { UpdateSalonDto } from './dto/update-salon.dto';
@@ -13,6 +13,15 @@ import { diskStorage } from 'multer';
 import { Salon } from './entities/salon.entity';
 import { extname } from 'path';
 
+const salonImageOptions = {
+  storage: diskStorage({
+    destination: (req, file, cb) => cb(null, './uploads/salon-images'),
+    filename: (req, file, cb) => {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+      cb(null, `${file.fieldname}-${uniqueSuffix}${extname(file.originalname)}`);
+    },
+  }),
+};
 
 @Controller('salon')
 export class SalonController {
@@ -21,21 +30,11 @@ export class SalonController {
   @Post()
   @Roles('owner')
   @UseGuards(RolesGuard)
-  @UseInterceptors(FileFieldsInterceptor([
-      { name: 'image', maxCount: 1 }
-    ], {
-      storage: diskStorage({
-        destination: (req, file, cb) => {
-          if (file.fieldname === 'image') {
-            cb(null, './uploads/salon-images');
-          } 
-        },
-        filename: (req, file, cb) => {
-          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-          cb(null, `${file.fieldname}-${uniqueSuffix}${extname(file.originalname)}`);
-        }
-      })
-    }))
+  @UseInterceptors(FileFieldsInterceptor(
+    [{ name: 'image', maxCount: 1 }], 
+    salonImageOptions
+    )
+  )
     create(@Body() createSalonDto: CreateSalonDto, @UploadedFiles() files: { image?: Express.Multer.File[]}, @Req() req): Observable<Salon> {
       const image = files?.image?.[0];
       if (image) {
@@ -55,6 +54,22 @@ export class SalonController {
     return this.salonService.findOne(id);
   }
 
+  @Patch(':id')
+  @Roles('owner')
+  @UseGuards(RolesGuard)
+  @UseInterceptors(FileFieldsInterceptor([{ name: 'image', maxCount: 1 }], salonImageOptions))
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateSalonDto: UpdateSalonDto,
+    @UploadedFiles() files: { image?: Express.Multer.File[] },
+    @Req() req,
+  ): Observable<SalonInfo> {
+    const image = files?.image?.[0];
+    if (image) {
+      updateSalonDto.image = image.path.replace(/\\/g, '/');
+    }
+    return this.salonService.update(id, updateSalonDto, req.user.id);
+  }
 
   @Get('search')
   searchSalon(

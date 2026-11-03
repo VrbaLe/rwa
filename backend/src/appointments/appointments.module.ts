@@ -7,9 +7,10 @@ import { User } from 'src/user/entities/user.entity';
 import { Salon } from 'src/salon/entities/salon.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { Appointment } from './entities/appointment.entity';
+import { Treatment } from 'src/treatments/entities/treatment.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Appointment,Review, User, Salon]), AuthModule],
+  imports: [TypeOrmModule.forFeature([Appointment,Review, User, Salon, Treatment]), AuthModule],
   controllers: [AppointmentsController],
   providers: [AppointmentsService],
     exports: [AppointmentsService]
