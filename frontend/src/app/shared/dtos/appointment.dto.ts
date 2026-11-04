@@ -8,4 +8,5 @@ export interface AppointmentDto {
   created_at: string;
   salon?: SalonInfoDto;
   client?: UserShortDto;
+  treatment?: { id: number; name: string; price: number } | null;
 }

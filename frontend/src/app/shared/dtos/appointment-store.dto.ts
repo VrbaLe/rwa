@@ -7,4 +7,5 @@ export interface AppointmentStoreDto {
   clientId: number | null;
   salonName: string;
   clientName: string;
+  treatmentName: string | null; treatmentPrice: number | null;
 }

@@ -27,6 +27,10 @@
         {{ appointment.appointmentDate | date: 'dd.MM.yyyy' }}
         u {{ appointment.timeSlot }}
       </div>
+
+      @if (appointment.treatmentName) {
+        <div class="muted">{{ appointment.treatmentName }} · {{ appointment.treatmentPrice }} RSD</div>
+      }
     </div>
 
     <div class="appointment-actions">

@@ -20,7 +20,16 @@ import {
     loadSalonsFailure,
     loadSalonsSuccess,
     resetFilters,
-    setFilters
+    setFilters,
+    updateSalon,
+    updateSalonSuccess,
+    updateSalonFailure,
+    addTreatment,
+    addTreatmentSuccess,
+    addTreatmentFailure,
+    deleteTreatment,
+    deleteTreatmentFailure,
+    deleteTreatmentSuccess
 } from './salon.actions';
 
 export interface SalonState extends EntityState<SalonStoreDto> {
@@ -178,6 +187,23 @@ export const salonReducer = createReducer(
     }),
     on(deleteReviewFailure, (state, { error }) => ({
         ...state,
+        error: error
+    })),
+
+    // IZMENI SALON
+    on(updateSalon, (state) => ({
+        ...state,
+        loading: true,
+        error: null
+    })),
+    on(updateSalonSuccess, (state, { salon }) =>
+        salonAdapter.upsertOne(toStoreDto(salon), { ...state, loading: false })
+    ),
+
+    // GRESKE (izmena salona, usluge)
+    on(updateSalonFailure, addTreatmentFailure, deleteTreatmentFailure, (state, { error }) => ({
+        ...state,
+        loading: false,
         error: error
     }))
 );

@@ -14,6 +14,8 @@ import { deleteReview, loadSalon } from '../../shared/store/salon/salon.actions'
 import { selectSalonById } from '../../shared/store/salon/salon.selectors';
 import { selectIsLoggedIn, selectUserId } from '../../shared/store/user/user.selectors';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { TreatmentListComponent } from '../../shared/components/treatment-list/treatment-list.component';
+import { formatWorkingDays } from '../../shared/local-lists/working-hours.list';
 
 @Component({
   selector: 'app-salon-details',
@@ -25,7 +27,8 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
     StarRatingComponent,
     ReviewListComponent,
     ReviewFormComponent,
-    AppointmentFormComponent
+    AppointmentFormComponent,
+    TreatmentListComponent
   ],
   templateUrl: './salon-details.component.html',
   styleUrl: './salon-details.component.scss'
@@ -39,6 +42,7 @@ export class SalonDetailsComponent implements OnInit, OnDestroy {
   isLoggedIn$ = this.store.select(selectIsLoggedIn);
   userId$ = this.store.select(selectUserId);
 
+  
   constructor(
     private route: ActivatedRoute,
     private store: Store,
@@ -70,6 +74,10 @@ export class SalonDetailsComponent implements OnInit, OnDestroy {
     const url = `https://maps.google.com/maps?q=${encodeURIComponent(location)}&output=embed`;
 
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  }
+
+  workingDaysLabel(workingDays: string): string {
+    return formatWorkingDays(workingDays);
   }
 
   ngOnDestroy(): void {

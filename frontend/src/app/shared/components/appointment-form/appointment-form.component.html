@@ -1,22 +1,35 @@
 <form [formGroup]="form" (ngSubmit)="submit()" class="appointment-form">
   <h4>Zakaži termin</h4>
 
+  @if (treatments.length) {
+    <select formControlName="treatmentId">
+      <option [ngValue]="null">Izaberi uslugu (opciono)</option>
+      @for (treatment of treatments; track treatment.id) {
+        <option [ngValue]="treatment.id">{{ treatment.name }} · {{ treatment.price }} RSD</option>
+      }
+    </select>
+  }
+
   <input type="date" formControlName="appointmentDate" [min]="today" />
 
   @if (form.controls.appointmentDate.value) {
-    @if (bookedSlots$ | async; as booked) {
-      <div class="slots">
-        @for (slot of slots; track slot) {
-          <button
-            type="button"
-            class="slot"
-            [class.selected]="form.controls.timeSlot.value === slot"
-            [disabled]="booked.includes(slot)"
-            (click)="selectSlot(slot)">
-            <span>{{ slot }}</span>
-          </button>
-        }
-      </div>
+    @if (closedOnSelectedDate) {
+      <p class="error">Salon ne radi izabranog dana.</p>
+    } @else{
+      @if (bookedSlots$ | async; as booked) {
+        <div class="slots">
+          @for (slot of slots; track slot) {
+            <button
+              type="button"
+              class="slot"
+              [class.selected]="form.controls.timeSlot.value === slot"
+              [disabled]="booked.includes(slot)"
+              (click)="selectSlot(slot)">
+              <span>{{ slot }}</span>
+            </button>
+          }
+        </div>
+      }
     }
   }
 
@@ -28,5 +41,5 @@
     <p class="error">{{ error }}</p>
   }
 
-  <button type="submit" class="btn" [disabled]="form.invalid || (loading$ | async)">Zakaži</button>
+  <button type="submit" class="btn" [disabled]="form.invalid || closedOnSelectedDate || (loading$ | async)">Zakaži</button>
 </form>

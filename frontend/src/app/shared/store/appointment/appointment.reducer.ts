@@ -41,7 +41,9 @@ const toStoreDto = (appointment: AppointmentDto): AppointmentStoreDto => ({
     salonId: appointment.salon?.id ?? null,
     clientId: appointment.client?.id ?? null,
     salonName: appointment.salon?.name ?? 'Salon',
-    clientName: appointment.client?.email ?? 'Nepoznat korisnik'
+    clientName: appointment.client?.email ?? 'Nepoznat korisnik',
+    treatmentName: appointment.treatment?.name ?? null,
+    treatmentPrice: appointment.treatment?.price ?? null
 });
 
 export const appointmentReducer = createReducer(

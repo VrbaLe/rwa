@@ -3,4 +3,5 @@ export interface CreateAppointmentDto {
   salon_id: number;
   timeSlot: string;        
   appointmentDate: string; 
+  treatment_id?: number;
 }

@@ -40,8 +40,11 @@ import { CATEGORIES } from '../../local-lists/categories.list';
 export class SalonCardComponent {
   @Input({ required: true }) salon!: SalonViewDto;
   @Input() deletable = false;
+  @Input() editable = false;
   @Output() selected = new EventEmitter<number>();
   @Output() remove = new EventEmitter<number>();
+  @Output() edit = new EventEmitter<number>();
+
 
   get categoryLabel(): string {
     return CATEGORIES.find(category => category.value === this.salon.category)?.label ?? this.salon.category;
@@ -54,5 +57,10 @@ export class SalonCardComponent {
   onRemove(event: Event): void {
     event.stopPropagation();
     this.remove.emit(this.salon.id);
+  }
+
+  onEdit(event: Event): void {
+    event.stopPropagation();
+    this.edit.emit(this.salon.id);
   }
 }

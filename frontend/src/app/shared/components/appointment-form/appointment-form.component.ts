@@ -12,6 +12,8 @@ import {
   selectBookedSlots
 } from '../../store/appointment/appointment.selectors';
 import { selectUserId } from '../../store/user/user.selectors';
+import { TreatmentDto } from '../../dtos/treatment.dto';
+import { generateTimeSlots, isWorkingDay } from '../../local-lists/working-hours.list';
 
 @Component({
   selector: 'app-appointment-form',
@@ -22,11 +24,15 @@ import { selectUserId } from '../../store/user/user.selectors';
 })
 export class AppointmentFormComponent implements OnInit, OnDestroy {
   @Input({ required: true }) salonId!: number;
+  @Input() openTime = '09:00';
+  @Input() closeTime = '17:00';
+  @Input() workingDays = '1,2,3,4,5,6';
+  @Input() treatments: TreatmentDto[] = [];
 
   private destroy$ = new Subject<void>();
 
   today = new Date().toISOString().slice(0, 10);
-  slots = TIME_SLOTS;
+  //slots = TIME_SLOTS;
   submitted = false;
 
   added$: Observable<boolean> = this.store.select(selectAppointmentAdded);
@@ -36,6 +42,7 @@ export class AppointmentFormComponent implements OnInit, OnDestroy {
 
 
   form = this.fb.nonNullable.group({
+    treatmentId: [null as number | null],
     appointmentDate: ['', [Validators.required]],
     timeSlot: ['', [Validators.required]]
   });
@@ -44,6 +51,15 @@ export class AppointmentFormComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private store: Store
   ) {}
+
+  get slots(): string[] {
+    return generateTimeSlots(this.openTime || '09:00', this.closeTime || '17:00');
+  }
+
+  get closedOnSelectedDate(): boolean {
+    const date = this.form.controls.appointmentDate.value;
+    return !!date && !isWorkingDay(date, this.workingDays || '1,2,3,4,5,6,7');
+  }
 
   ngOnInit(): void {
     const dateControl = this.form.controls.appointmentDate;
@@ -88,21 +104,22 @@ export class AppointmentFormComponent implements OnInit, OnDestroy {
   }
 
   submit(): void {
-    if (this.form.invalid) {
+    if (this.form.invalid || this.closedOnSelectedDate) {
       return;
     }
     this.store.select(selectUserId).pipe(take(1)).subscribe(userId => {
       if (userId === null) {
         return;
       }
-      const { appointmentDate, timeSlot } = this.form.getRawValue();
+      const { appointmentDate, timeSlot, treatmentId } = this.form.getRawValue();
       this.submitted = true;
       this.store.dispatch(createAppointment({
         appointment: {
           client_id: userId,
           salon_id: this.salonId,
           appointmentDate,
-          timeSlot
+          timeSlot,
+          treatment_id: treatmentId ?? undefined
         }
       }));
     });

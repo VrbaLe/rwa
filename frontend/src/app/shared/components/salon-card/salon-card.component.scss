@@ -73,5 +73,5 @@
   h3 { margin: 0; font-size: 1.1rem; }
   p { margin: 0; }
   .meta { color: var(--muted); font-size: 0.9rem; }
-  .btn { margin-top: 10px; align-self: flex-start; }
+  .actions { display: flex; gap: 8px; margin-top: 10px; }
 }

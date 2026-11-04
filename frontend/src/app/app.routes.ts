@@ -8,6 +8,7 @@ import { SalonFormComponent } from './screens/salon-form/salon-form.component';
 import { AuthGuard } from './shared/guards/auth.guard';
 import { NotAuthGuard } from './shared/guards/not-auth.guard';
 import { OwnerGuard } from './shared/guards/owner.guard';
+import { SalonEditComponent } from './screens/salon-edit/salon-edit.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -16,5 +17,6 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent, canActivate: [NotAuthGuard] },
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
   { path: 'salons/new', component: SalonFormComponent, canActivate: [OwnerGuard] },
+  { path: 'salons/:id/edit', component: SalonEditComponent, canActivate: [OwnerGuard] },
   { path: '**', redirectTo: '' }
 ];

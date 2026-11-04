@@ -48,4 +48,8 @@ export class SalonService {
       return this.http.delete(`${this.apiUrl}/salon/${id}`);
     }
 
+    updateSalon(id: number, salonData: FormData): Observable<SalonInfoDto> {
+      return this.http.patch<SalonInfoDto>(`${this.apiUrl}/salon/${id}`, salonData);
+    }
+
 }

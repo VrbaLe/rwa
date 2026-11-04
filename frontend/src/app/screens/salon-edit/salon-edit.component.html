@@ -1,0 +1,64 @@
+@if (salon$ | async; as salon) {
+  <section class="page">
+    <h1>Izmena salona</h1>
+
+    <div class="columns">
+      <form [formGroup]="form" (ngSubmit)="submit()" class="panel">
+        <h3>Osnovni podaci</h3>
+
+        <input formControlName="name" placeholder="Naziv salona" />
+        <textarea formControlName="description" rows="3" placeholder="Opis"></textarea>
+
+        <select formControlName="category">
+          @for (category of categories; track category.value) {
+            <option [value]="category.value">{{ category.label }}</option>
+          }
+        </select>
+
+        <input formControlName="city" placeholder="Grad" />
+        <input formControlName="tags" placeholder="Tagovi (odvojeni zarezom)" />
+
+        <h3>Radno vreme</h3>
+        <div class="hours">
+          <label>Od <input type="time" formControlName="openTime" /></label>
+          <label>Do <input type="time" formControlName="closeTime" /></label>
+        </div>
+        @if (!hoursValid) {
+          <p class="error">Vreme otvaranja mora biti pre vremena zatvaranja.</p>
+        }
+
+        <div class="days">
+          @for (day of weekDays; track day.value) {
+            <button
+              type="button"
+              class="day"
+              [class.active]="isDaySelected(day.value)"
+              (click)="toggleDay(day.value)">
+              {{ day.label }}
+            </button>
+          }
+        </div>
+
+        <label class="muted">Nova slika (opciono)</label>
+        <input type="file" accept="image/*" (change)="onFile($event)" />
+
+        @if (error$ | async; as error) {
+          <p class="error">{{ error }}</p>
+        }
+
+        <button type="submit" class="btn" [disabled]="!canSave || (loading$ | async)">Sačuvaj izmene</button>
+      </form>
+
+      <div class="panel">
+        <h3>Cenovnik</h3>
+        <app-treatment-list
+          [treatments]="salon.treatments ?? []"
+          [editable]="true"
+          (remove)="removeTreatment($event)" />
+        <app-treatment-form [salonId]="salon.id" />
+      </div>
+    </div>
+  </section>
+} @else {
+  <p class="page muted">Učitavanje...</p>
+}

@@ -20,8 +20,10 @@
               <app-salon-card
                 [salon]="salon"
                 [deletable]="true"
+                [editable]="true"
                 (selected)="openSalon($event)"
-                (remove)="removeSalon($event)" />
+                (remove)="removeSalon($event)" 
+                (edit)="editSalon($event)"/>
             } @empty {
               <p class="muted">Još nemaš nijedan salon.</p>
             }

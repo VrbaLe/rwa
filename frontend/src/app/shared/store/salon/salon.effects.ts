@@ -5,6 +5,7 @@ import { catchError, map, mergeMap, of, tap } from "rxjs";
 import { environment } from "../../../../environments/environment";
 import { SalonService } from "../../services/salon/salon.service";
 import { ReviewService } from "../../services/review/review.service";
+import { TreatmentService } from "../../services/treatment/treatment.service";
 import { SalonInfoDto } from "../../dtos/salon-info.dto";
 import {
   addReview,
@@ -24,7 +25,16 @@ import {
   loadSalonSuccess,
   loadSalons,
   loadSalonsFailure,
-  loadSalonsSuccess
+  loadSalonsSuccess,
+  updateSalon,
+  updateSalonFailure,
+  updateSalonSuccess,
+  addTreatment,
+  addTreatmentFailure,
+  addTreatmentSuccess,
+  deleteTreatment,
+  deleteTreatmentFailure,
+  deleteTreatmentSuccess,
 } from "./salon.actions";
 
 @Injectable()
@@ -171,10 +181,75 @@ export class SalonEffects {
     return `${environment.apiUrl}/${path.replace(/\\/g, "/")}`;
   }
 
+  updateSalon = createEffect(() =>
+    this.actions$.pipe(
+      ofType(updateSalon),
+      mergeMap(action =>
+        this.salonService.updateSalon(action.id, action.salonData).pipe(
+          map(response => {
+            if (response) {
+              return updateSalonSuccess({ salon: this.mapSalon(response) });
+            } else {
+              return updateSalonFailure({ error: "Salon nije sačuvan" });
+            }
+          }),
+          catchError(error =>
+            of(updateSalonFailure({ error: error.error?.message ?? "Greška pri izmeni salona" }))
+          )
+        )
+      )
+    )
+  );
+
+  updateSalonSuccess = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(updateSalonSuccess),
+        tap(() => this.router.navigate(["/profile"]))
+      ),
+    { dispatch: false }
+  );
+
+  addTreatment = createEffect(() =>
+    this.actions$.pipe(
+      ofType(addTreatment),
+      mergeMap(action =>
+        this.treatmentService.create(action.treatment).pipe(
+          map(() => addTreatmentSuccess({ salon_id: action.treatment.salon_id })),
+          catchError(error =>
+            of(addTreatmentFailure({ error: error.error?.message ?? "Greška pri dodavanju usluge" }))
+          )
+        )
+      )
+    )
+  );
+
+  deleteTreatment = createEffect(() =>
+    this.actions$.pipe(
+      ofType(deleteTreatment),
+      mergeMap(action =>
+        this.treatmentService.remove(action.treatment_id).pipe(
+          map(() => deleteTreatmentSuccess({ salon_id: action.salon_id })),
+          catchError(error =>
+            of(deleteTreatmentFailure({ error: error.error?.message ?? "Greška pri brisanju usluge" }))
+          )
+        )
+      )
+    )
+  );
+
+  reloadSalonAfterTreatment = createEffect(() =>
+    this.actions$.pipe(
+      ofType(addTreatmentSuccess, deleteTreatmentSuccess),
+      map(action => loadSalon({ id: action.salon_id }))
+    )
+  );
+
   constructor(
     private actions$: Actions,
     private salonService: SalonService,
     private reviewService: ReviewService,
+    private treatmentService: TreatmentService,
     private router: Router
   ) {}
 }

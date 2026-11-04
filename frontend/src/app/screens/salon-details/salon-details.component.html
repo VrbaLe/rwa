@@ -14,6 +14,10 @@
         <p class="muted">{{ salon.city || 'Grad nije unet' }} · {{ categoryLabel(salon.category) }}</p>
         <p>{{ salon.description }}</p>
 
+        <p class="muted">
+          Radno vreme: {{ salon.openTime }} – {{ salon.closeTime }} · {{ workingDaysLabel(salon.workingDays) }}
+        </p>
+
         @if (salon.tags) {
           <div class="tags">
             @for (tag of salon.tags.split(','); track tag) {
@@ -33,10 +37,22 @@
       </div>
     </div>
 
+    <section class="pricelist">
+      <h3>Cenovnik</h3>
+      <app-treatment-list [treatments]="salon.treatments ?? []" />
+    </section>
+
     <div class="columns">
       <div>
         @if (isLoggedIn$ | async) {
-          <app-appointment-form [salonId]="salon.id" />
+          <app-appointment-form 
+            [salonId]="salon.id"
+            [openTime]="salon.openTime"
+            [closeTime]="salon.closeTime"
+            [workingDays]="salon.workingDays"
+            [treatments]="salon.treatments ?? []" 
+          />
+          <!-- <app-appointment-form [salonId]="salon.id" /> -->
         } @else {
           <div class="notice">
             Za zakazivanje termina morate biti prijavljeni.

@@ -3,6 +3,7 @@ import { SalonInfoDto } from "../../dtos/salon-info.dto";
 import { ReviewDto } from "../../dtos/review.dto";
 import { CreateReviewDto } from "../../dtos/create-review.dto";
 import { SalonFilterDto } from "../../dtos/salon-filter.dto";
+import { CreateTreatmentDto } from "../../dtos/treatment.dto";
 
 //SVI SALONI
 export const loadSalons= createAction(
@@ -93,5 +94,47 @@ export const deleteReviewSuccess = createAction(
 );
 export const deleteReviewFailure = createAction(
     '[Salon] Delete Review Failure',
+    props<{error: string}>()
+);
+
+//IZMENI SALON
+export const updateSalon = createAction(
+    '[Salon] Update Salon',
+    props<{id: number, salonData: FormData}>()
+);
+export const updateSalonSuccess = createAction(
+    '[Salon] Update Salon Success',
+    props<{salon: SalonInfoDto}>()
+);
+export const updateSalonFailure = createAction(
+    '[Salon] Update Salon Failure',
+    props<{error: string}>()
+);
+
+//DODAJ USLUGU
+export const addTreatment = createAction(
+    '[Salon] Add Treatment',
+    props<{treatment: CreateTreatmentDto}>()
+);
+export const addTreatmentSuccess = createAction(
+    '[Salon] Add Treatment Success',
+    props<{salon_id: number}>()
+);
+export const addTreatmentFailure = createAction(
+    '[Salon] Add Treatment Failure',
+    props<{error: string}>()
+);
+
+//OBRISI USLUGU
+export const deleteTreatment = createAction(
+    '[Salon] Delete Treatment',
+    props<{treatment_id: number, salon_id: number}>()
+);
+export const deleteTreatmentSuccess = createAction(
+    '[Salon] Delete Treatment Success',
+    props<{salon_id: number}>()
+);
+export const deleteTreatmentFailure = createAction(
+    '[Salon] Delete Treatment Failure',
     props<{error: string}>()
 );

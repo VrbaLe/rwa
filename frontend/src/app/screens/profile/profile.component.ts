@@ -87,4 +87,8 @@ export class ProfileComponent implements OnInit {
   saveProfile(ownerId: number, ownerData: FormData): void {
     this.store.dispatch(updateOwner({ id: ownerId, ownerData }));
   }
+
+  editSalon(id: number): void {
+    this.router.navigate(['/salons', id, 'edit']);
+  }
 }

@@ -1,0 +1,17 @@
+@for (treatment of treatments; track treatment.id) {
+  <div class="row">
+    <div>
+      <strong>{{ treatment.name }}</strong>
+      <div class="muted">{{ treatment.duration }} min</div>
+    </div>
+
+    <div class="right">
+      <span class="price">{{ treatment.price }} RSD</span>
+      @if (editable) {
+        <button type="button" class="btn btn-danger" (click)="remove.emit(treatment.id)">Obriši</button>
+      }
+    </div>
+  </div>
+} @empty {
+  <p class="muted">Cenovnik još nije unet.</p>
+}

@@ -1,5 +1,6 @@
 import { OwnerDto } from './owner.dto';
 import { ReviewDto } from './review.dto';
+import { TreatmentDto } from './treatment.dto';
 
 export interface SalonInfoDto {
   id: number;
@@ -15,4 +16,8 @@ export interface SalonInfoDto {
   reviews?: ReviewDto[];
   avgRating?: number;
   reviewCount?: number;
+  openTime: string;
+  closeTime: string;
+  workingDays: string;
+  treatments: TreatmentDto[];
 }

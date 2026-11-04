@@ -1,0 +1,36 @@
+.columns {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 28px;
+  align-items: start;
+
+  @media (max-width: 900px) { grid-template-columns: 1fr; }
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+
+  h3 { margin: 4px 0; }
+}
+
+.hours { display: flex; gap: 16px; label { display: flex; flex-direction: column; gap: 4px; } }
+
+.days { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.day {
+  padding: 8px 14px;
+  font: inherit;
+  color: var(--muted);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+
+  &.active { color: #14110a; background: var(--accent); border-color: var(--accent); font-weight: 600; }
+}

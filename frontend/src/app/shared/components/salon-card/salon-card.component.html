@@ -37,8 +37,15 @@
       <p class="meta">Vlasnik: {{ salon.owner.firstName }} {{ salon.owner.lastName }}</p>
     }
 
-    @if (deletable) {
-      <button type="button" class="btn btn-danger" (click)="onRemove($event)">Obriši</button>
+    @if (editable || deletable) {
+      <div class="actions">
+        @if (editable) {
+          <button type="button" class="btn btn-outline" (click)="onEdit($event)">Izmeni</button>
+        }
+        @if (deletable) {
+          <button type="button" class="btn btn-danger" (click)="onRemove($event)">Obriši</button>
+        }
+      </div>
     }
   </div>
 </article>
