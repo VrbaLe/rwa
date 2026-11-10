@@ -16,6 +16,8 @@ import { selectSalonsLoaded } from '../../shared/store/salon/salon.selectors';
 import { selectMyReviews, selectOwnerAppointments } from '../../shared/store/user/profile.selectors';
 import { selectIsOwner, selectCurrentUser } from '../../shared/store/user/user.selectors';
 import { selectCurrentOwner, selectMySalons } from '../../shared/store/user/user-view.selectors';
+import { OwnerCalendarComponent } from '../../shared/components/owner-calendar/owner-calendar.component';
+
 
 @Component({
   selector: 'app-profile',
@@ -27,7 +29,8 @@ import { selectCurrentOwner, selectMySalons } from '../../shared/store/user/user
     AppointmentListComponent,
     OwnerProfileFormComponent,
     SalonCardComponent,
-    StarRatingComponent
+    StarRatingComponent,
+    OwnerCalendarComponent
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss'

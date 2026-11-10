@@ -30,8 +30,14 @@
           </div>
         }
         @case ('ownerAppointments') {
-          <app-appointment-list [appointments]="(ownerAppointments$ | async) ?? []" />
+          <app-owner-calendar
+            [appointments]="(ownerAppointments$ | async) ?? []"
+            [salons]="(mySalons$ | async) ?? []"
+            (cancelAppointment)="cancelAppointment($event)" />
         }
+        <!-- @case ('ownerAppointments') {
+          <app-appointment-list [appointments]="(ownerAppointments$ | async) ?? []" />
+        } -->
         @case ('profile') {
           @if (currentOwner$ | async; as owner) {
             <app-owner-profile-form [owner]="owner" (save)="saveProfile(owner.id, $event)" />

@@ -39,7 +39,7 @@
 
     <section class="pricelist">
       <h3>Cenovnik</h3>
-      <app-treatment-list [treatments]="salon.treatments ?? []" />
+      <app-treatment-list [treatments]="salon.treatments " />
     </section>
 
     <div class="columns">
@@ -50,7 +50,7 @@
             [openTime]="salon.openTime"
             [closeTime]="salon.closeTime"
             [workingDays]="salon.workingDays"
-            [treatments]="salon.treatments ?? []" 
+            [treatments]="salon.treatments " 
           />
           <!-- <app-appointment-form [salonId]="salon.id" /> -->
         } @else {

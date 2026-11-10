@@ -1,0 +1,106 @@
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.week-nav, .filters { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+.week { min-width: 190px; text-align: center; }
+
+.nav-btn {
+  width: 34px;
+  height: 34px;
+  font-size: 1.2rem;
+  line-height: 1;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+
+  &:hover { color: var(--accent); border-color: var(--accent); }
+}
+
+.scroll {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.calendar {
+  display: grid;
+  grid-template-columns: 64px repeat(7, minmax(150px, 1fr));
+  gap: 1px;
+  min-width: 1100px;
+  background: var(--border);
+}
+
+.corner, .day-head, .time, .cell { background: var(--surface); }
+
+.day-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 4px;
+  position: sticky;
+  top: 0;
+
+  span { font-weight: 700; }
+  small { color: var(--muted); }
+
+  &.today { background: var(--accent-soft); span { color: var(--accent); } }
+}
+
+.time {
+  display: flex;
+  justify-content: center;
+  padding-top: 10px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 72px;
+  padding: 4px;
+
+  &.today { background: rgba(214, 166, 66, 0.05); }
+}
+
+.booking {
+  position: relative;
+  padding: 7px 26px 7px 9px;
+  font-size: 0.8rem;
+  background: var(--accent-soft);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+
+  .who { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .what { color: var(--accent); }
+  .what.none { color: var(--muted); }
+  .where { margin-top: 2px; font-size: 0.72rem; color: var(--muted); }
+}
+
+.cancel {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--muted);
+  background: none;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+
+  &:hover { color: #fff; background: var(--danger); }
+}

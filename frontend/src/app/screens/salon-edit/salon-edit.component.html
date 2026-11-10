@@ -52,7 +52,7 @@
       <div class="panel">
         <h3>Cenovnik</h3>
         <app-treatment-list
-          [treatments]="salon.treatments ?? []"
+          [treatments]="salon.treatments"
           [editable]="true"
           (remove)="removeTreatment($event)" />
         <app-treatment-form [salonId]="salon.id" />
