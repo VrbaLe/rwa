@@ -62,3 +62,27 @@
 }
 
 .pricelist { margin-bottom: 28px; }
+
+.info-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+
+  h1 {
+    margin: 0;
+  }
+}
+
+.favorite-btn {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+  .info-header {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+}

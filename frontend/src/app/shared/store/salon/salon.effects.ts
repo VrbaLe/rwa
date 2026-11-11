@@ -7,6 +7,7 @@ import { SalonService } from "../../services/salon/salon.service";
 import { ReviewService } from "../../services/review/review.service";
 import { TreatmentService } from "../../services/treatment/treatment.service";
 import { SalonInfoDto } from "../../dtos/salon-info.dto";
+import { LocationService } from "../../services/location/location.service";
 import {
   addReview,
   addReviewFailure,
@@ -35,6 +36,9 @@ import {
   deleteTreatment,
   deleteTreatmentFailure,
   deleteTreatmentSuccess,
+  locateUser,
+  locateUserFailure,
+  locateUserSuccess
 } from "./salon.actions";
 
 @Injectable()
@@ -245,11 +249,26 @@ export class SalonEffects {
     )
   );
 
+  locateUser = createEffect(() =>
+    this.actions$.pipe(
+      ofType(locateUser),
+      mergeMap(() =>
+        this.locationService.getCurrentPosition().pipe(
+          map(location => locateUserSuccess({ location })),
+          catchError(error =>
+            of(locateUserFailure({ error: error.message ?? "Lokacija trenutno nije dostupna." }))
+          )
+        )
+      )
+    )
+  );
+
   constructor(
     private actions$: Actions,
     private salonService: SalonService,
     private reviewService: ReviewService,
     private treatmentService: TreatmentService,
-    private router: Router
+    private router: Router,
+    private locationService: LocationService
   ) {}
 }

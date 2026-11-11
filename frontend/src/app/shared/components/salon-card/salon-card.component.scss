@@ -1,24 +1,59 @@
 // .card {
-//   background: #fff;
+//   display: flex;
+//   flex-direction: column;
+//   background: var(--surface);
 //   border: 1px solid var(--border);
-//   border-radius: 12px;
+//   border-radius: 16px;
 //   overflow: hidden;
 //   cursor: pointer;
-//   transition: box-shadow 0.2s;
+//   transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
 
-//   &:hover { box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12); }
-
-//   img { width: 100%; height: 160px; object-fit: cover; display: block; }
-
-//   .info {
-//     padding: 12px;
-
-//     h3 { margin: 0 0 4px; }
-//     p { margin: 4px 0; }
-//     .meta { color: var(--muted); font-size: 0.9rem; }
-//     .btn { margin-top: 8px; }
+//   &:hover {
+//     transform: translateY(-4px);
+//     border-color: var(--accent);
+//     box-shadow: 0 14px 32px rgba(0, 0, 0, 0.5);
 //   }
 // }
+
+// .media {
+//   position: relative;
+//   aspect-ratio: 4 / 3;
+
+//   img { width: 100%; height: 100%; object-fit: cover; display: block; }
+// }
+
+// .badge {
+//   position: absolute;
+//   padding: 4px 11px;
+//   font-size: 0.8rem;
+//   font-weight: 600;
+//   background: rgba(14, 15, 18, 0.78);
+//   border-radius: 999px;
+//   backdrop-filter: blur(6px);
+// }
+
+// .rating {
+//   top: 12px;
+//   right: 12px;
+//   color: var(--accent);
+
+//   small { margin-left: 4px; font-weight: 400; color: var(--muted); }
+// }
+
+// .category { left: 12px; bottom: 12px; color: var(--text); }
+
+// .info {
+//   display: flex;
+//   flex-direction: column;
+//   gap: 6px;
+//   padding: 16px;
+
+//   h3 { margin: 0; font-size: 1.1rem; }
+//   p { margin: 0; }
+//   .meta { color: var(--muted); font-size: 0.9rem; }
+//   .actions { display: flex; gap: 8px; margin-top: 10px; }
+// }
+
 
 .card {
   display: flex;
@@ -64,6 +99,24 @@
 
 .category { left: 12px; bottom: 12px; color: var(--text); }
 
+.heart {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  padding: 7px;
+  color: var(--text);
+  background: rgba(14, 15, 18, 0.78);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: transform 0.15s, color 0.15s;
+
+  &:hover { transform: scale(1.12); }
+  &.active { color: #e5484d; }
+}
+
 .info {
   display: flex;
   flex-direction: column;
@@ -73,5 +126,6 @@
   h3 { margin: 0; font-size: 1.1rem; }
   p { margin: 0; }
   .meta { color: var(--muted); font-size: 0.9rem; }
+  .distance { color: var(--accent); }
   .actions { display: flex; gap: 8px; margin-top: 10px; }
 }

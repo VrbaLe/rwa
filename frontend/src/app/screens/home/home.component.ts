@@ -1,25 +1,29 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { Subject, debounceTime, distinctUntilChanged, take, takeUntil } from 'rxjs';
+import { Observable, Subject, debounceTime, distinctUntilChanged, take, takeUntil } from 'rxjs';
 import { SalonCardComponent } from '../../shared/components/salon-card/salon-card.component';
+import { GeoPoint } from '../../shared/dtos/geo-point.dto';
 import { SalonFilterDto } from '../../shared/dtos/salon-filter.dto';
 import { SalonViewDto } from '../../shared/dtos/salon-view.dto';
 import { CATEGORIES } from '../../shared/local-lists/categories.list';
 import { initialFilters } from '../../shared/store/salon/salon.reducer';
-import { loadSalons, resetFilters, setFilters } from '../../shared/store/salon/salon.actions';
+import { addFavorite, removeFavorite } from '../../shared/store/favorite/favorite.actions';
+import { clearUserLocation, loadSalons, locateUser, resetFilters, setFilters } from '../../shared/store/salon/salon.actions';
 import {
   selectCities,
   selectFilteredSalons,
+  selectLocating,
+  selectLocationError,
   selectSalonError,
   selectSalonFilters,
   selectSalonLoading,
-  selectSalonsLoaded
+  selectSalonsLoaded,
+  selectUserLocation
 } from '../../shared/store/salon/salon.selectors';
-import { selectIsOwner } from '../../shared/store/user/user.selectors';
+import { selectIsLoggedIn, selectIsOwner } from '../../shared/store/user/user.selectors';
 
 @Component({
   selector: 'app-home',
@@ -43,12 +47,19 @@ export class HomeComponent implements OnInit, OnDestroy {
   loading$: Observable<boolean> = this.store.select(selectSalonLoading);
   error$: Observable<string | null> = this.store.select(selectSalonError);
   isOwner$: Observable<boolean> = this.store.select(selectIsOwner);
+  isLoggedIn$: Observable<boolean> = this.store.select(selectIsLoggedIn);
+  userLocation$: Observable<GeoPoint | null> = this.store.select(selectUserLocation);
+  locating$: Observable<boolean> = this.store.select(selectLocating);
+  locationError$: Observable<string | null> = this.store.select(selectLocationError);
+
 
   filterForm = this.fb.nonNullable.group({
     search: [initialFilters.search],
     city: [initialFilters.city],
     category: [initialFilters.category],
     minRating: [initialFilters.minRating],
+    maxDistance: [initialFilters.maxDistance],
+    onlyFavorites: [initialFilters.onlyFavorites],
     sortBy: [initialFilters.sortBy as string],
     order: [initialFilters.order as string]
   });
@@ -67,8 +78,8 @@ export class HomeComponent implements OnInit, OnDestroy {
       }
     });
 
-    // vrati prikaz filtera iz store-a (npr. kad se vratis sa stranice salona)
-    this.store.select(selectSalonFilters).pipe(take(1)).subscribe(filters => {
+    // forma uvek prati filtere iz store-a (i kad ih promeni nesto drugo, npr. pronadjena lokacija)
+    this.store.select(selectSalonFilters).pipe(takeUntil(this.destroy$)).subscribe(filters => {
       this.filterForm.patchValue(filters, { emitEvent: false });
     });
 
@@ -86,9 +97,24 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.router.navigate(['/salon', id]);
   }
 
+  toggleFavorite(event: { id: number; favorite: boolean }): void {
+    this.store.dispatch(
+      event.favorite ? addFavorite({ salon_id: event.id }) : removeFavorite({ salon_id: event.id })
+    );
+  }
+
+  locate(): void {
+    this.store.dispatch(locateUser());
+  }
+
+  clearLocation(): void {
+    this.store.dispatch(clearUserLocation());
+  }
+
+
   reset(): void {
     this.store.dispatch(resetFilters());
-    this.filterForm.reset(initialFilters, { emitEvent: false });
+    //this.filterForm.reset(initialFilters, { emitEvent: false });
   }
 
   ngOnDestroy(): void {

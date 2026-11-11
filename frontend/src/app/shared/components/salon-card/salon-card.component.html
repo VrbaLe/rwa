@@ -20,7 +20,7 @@
   </div>
 </div> -->
 
-<article class="card" (click)="onClick()">
+<!-- <article class="card" (click)="onClick()">
   <div class="media">
     <img [src]="salon.image" [alt]="salon.name" />
     <span class="badge rating">
@@ -32,6 +32,57 @@
   <div class="info">
     <h3>{{ salon.name }}</h3>
     <p class="meta">{{ salon.city || 'Grad nije unet' }}</p>
+
+    @if (salon.owner) {
+      <p class="meta">Vlasnik: {{ salon.owner.firstName }} {{ salon.owner.lastName }}</p>
+    }
+
+    @if (editable || deletable) {
+      <div class="actions">
+        @if (editable) {
+          <button type="button" class="btn btn-outline" (click)="onEdit($event)">Izmeni</button>
+        }
+        @if (deletable) {
+          <button type="button" class="btn btn-danger" (click)="onRemove($event)">Obriši</button>
+        }
+      </div>
+    }
+  </div>
+</article> -->
+
+
+
+<article class="card" (click)="onClick()">
+  <div class="media">
+    <img [src]="salon.image" [alt]="salon.name" />
+
+    @if (showFavorite) {
+      <button
+        type="button"
+        class="heart"
+        [class.active]="salon.isFavorite"
+        (click)="onFavorite($event)"
+        [attr.aria-label]="salon.isFavorite ? 'Ukloni iz omiljenih' : 'Dodaj u omiljene'">
+        <svg viewBox="0 0 24 24" width="20" height="20" [attr.fill]="salon.isFavorite ? 'currentColor' : 'none'"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+        </svg>
+      </button>
+    }
+
+    <span class="badge rating">
+      ★ {{ salon.avgRating | number: '1.1-1' }}<small>({{ salon.reviewCount }})</small>
+    </span>
+    <span class="badge category">{{ categoryLabel }}</span>
+  </div>
+
+  <div class="info">
+    <h3>{{ salon.name }}</h3>
+    <p class="meta">{{ salon.city || 'Grad nije unet' }}</p>
+
+    @if (salon.distanceKm !== null) {
+      <p class="meta distance">{{ salon.distanceKm | number: '1.1-1' }} km od tebe</p>
+    }
 
     @if (salon.owner) {
       <p class="meta">Vlasnik: {{ salon.owner.firstName }} {{ salon.owner.lastName }}</p>

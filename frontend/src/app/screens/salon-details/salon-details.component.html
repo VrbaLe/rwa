@@ -4,8 +4,18 @@
       <img class="hero" [src]="salon.image" [alt]="salon.name" />
 
       <div class="info">
-        <h1>{{ salon.name }}</h1>
+        <div class="info-header">
+          <h1>{{ salon.name }}</h1>
 
+          @if (isLoggedIn$ | async) {
+            <button
+              type="button"
+              class="btn btn-outline favorite-btn"
+              (click)="toggleFavorite(salon)">
+              {{ salon.isFavorite ? '♥ U omiljenima' : '♡ Dodaj u omiljene' }}
+            </button>
+          }
+        </div>
         <div class="rating">
           <app-star-rating [value]="salon.avgRating" />
           {{ salon.avgRating | number: '1.1-1' }} ({{ salon.reviewCount }} recenzija)

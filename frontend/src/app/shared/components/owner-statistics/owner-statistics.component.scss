@@ -1,0 +1,60 @@
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.panel {
+  padding: 20px;
+  margin-bottom: 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+
+  h3 { margin: 0 0 12px; }
+}
+
+.panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  h3 { margin: 0; }
+}
+
+.toggle {
+  display: flex;
+  gap: 6px;
+
+  button {
+    padding: 6px 12px;
+    font: inherit;
+    font-size: 0.85rem;
+    color: var(--muted);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+
+    &.active { color: #14110a; background: var(--accent); border-color: var(--accent); font-weight: 600; }
+  }
+}
+
+.tables {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th, td { padding: 10px 8px; text-align: left; border-bottom: 1px solid var(--border); }
+  th { font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+}
+
+.note { font-size: 0.85rem; }

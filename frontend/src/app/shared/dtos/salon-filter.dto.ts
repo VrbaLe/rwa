@@ -3,6 +3,8 @@ export interface SalonFilterDto {
   category: string;
   search: string;
   minRating: number;
-  sortBy: 'rating' | 'reviews' | 'name' | 'newest';
+  maxDistance: number;     
+  onlyFavorites: boolean;
+  sortBy: 'rating' | 'reviews' | 'name' | 'newest' | 'distance';
   order: 'ASC' | 'DESC';
 }

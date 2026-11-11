@@ -12,6 +12,8 @@ import { UserEffects } from './shared/store/user/user.effects';
 import { OwnerEffects } from './shared/store/owner/owner.effects';
 import { SalonEffects } from './shared/store/salon/salon.effects';
 import { AppointmentEffects } from './shared/store/appointment/appointment.effects';
+import { StatisticsEffects } from './shared/store/statistics/statistics.effects';
+import { FavoriteEffects } from './shared/store/favorite/favorite.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -19,7 +21,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptorsFromDi()),
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     provideStore(appReducers),
-    provideEffects([AuthEffects, UserEffects, OwnerEffects, SalonEffects, AppointmentEffects]),
+    provideEffects([AuthEffects, UserEffects, OwnerEffects, SalonEffects, AppointmentEffects, FavoriteEffects,StatisticsEffects]),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
   ],
 };

@@ -5,4 +5,6 @@ export interface SalonViewDto extends SalonStoreDto {
   owner?: OwnerDto;
   avgRating: number;
   reviewCount: number;
+  distanceKm: number | null;
+  isFavorite: boolean;
 }

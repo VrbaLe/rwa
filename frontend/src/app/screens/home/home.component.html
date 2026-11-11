@@ -115,6 +115,7 @@
             <option value="reviews">Po broju recenzija</option>
             <option value="name">Po imenu</option>
             <option value="newest">Po datumu dodavanja</option>
+            <option value="distance" [disabled]="!(userLocation$ | async)">Najbliži prvo</option>
           </select>
         </label>
 
@@ -126,6 +127,41 @@
           </select>
         </label>
 
+        @if (isLoggedIn$ | async) {
+          <label class="check">
+            <input type="checkbox" formControlName="onlyFavorites" />
+            Samo omiljeni saloni
+          </label>
+        }
+
+        <div class="nearby">
+          <span class="section-title">Blizu mene</span>
+
+          @if (userLocation$ | async) {
+            <p class="muted small">Lokacija je uključena.</p>
+
+            <label>
+              Udaljenost
+              <select formControlName="maxDistance">
+                <option [ngValue]="0">Bilo koja</option>
+                <option [ngValue]="5">Do 5 km</option>
+                <option [ngValue]="10">Do 10 km</option>
+                <option [ngValue]="25">Do 25 km</option>
+                <option [ngValue]="50">Do 50 km</option>
+              </select>
+            </label>
+
+            <button type="button" class="btn btn-outline" (click)="clearLocation()">Isključi lokaciju</button>
+          } @else {
+            <button type="button" class="btn btn-outline" (click)="locate()" [disabled]="locating$ | async">
+              {{ (locating$ | async) ? 'Tražim lokaciju...' : 'Pronađi salone blizu mene' }}
+            </button>
+          }
+
+          @if (locationError$ | async; as locationError) {
+            <p class="error small">{{ locationError }}</p>
+          }
+        </div>
         <button type="button" class="btn btn-outline" (click)="reset()">Poništi filtere</button>
       </form>
     </aside>
@@ -149,7 +185,11 @@
 
         <div class="grid">
           @for (salon of salons; track salon.id) {
-            <app-salon-card [salon]="salon" (selected)="openSalon($event)" />
+            <app-salon-card 
+              [salon]="salon" 
+              [showFavorite]="(isLoggedIn$ | async) ?? false" 
+              (selected)="openSalon($event)" 
+              (favoriteToggle)="toggleFavorite($event)" />
           } @empty {
             <p class="muted">Nema salona za izabrane filtere.</p>
           }

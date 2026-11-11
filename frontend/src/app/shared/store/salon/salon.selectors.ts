@@ -1,8 +1,11 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { SalonState, salonAdapter } from './salon.reducer';
 import { selectOwnerEntities } from '../owner/owner.selectors';
+import { selectFavoriteIds } from '../favorite/favorite.selectors';
 import { SalonViewDto } from '../../dtos/salon-view.dto';
+import { SalonStoreDto } from '../../dtos/salon-store.dto';
 import { SalonFilterDto } from '../../dtos/salon-filter.dto';
+import { distanceKm } from '../../utils/geo.util';
 
 export const selectSalonState = createFeatureSelector<SalonState>('salon');
 
@@ -18,6 +21,11 @@ export const selectSalonError = createSelector(selectSalonState, (state) => stat
 export const selectSalonFilters = createSelector(selectSalonState, (state) => state.filters);
 export const selectSelectedSalonId = createSelector(selectSalonState, (state) => state.selectedSalonId);
 
+// LOKACIJA KORISNIKA
+export const selectUserLocation = createSelector(selectSalonState, (state) => state.userLocation);
+export const selectLocating = createSelector(selectSalonState, (state) => state.locating);
+export const selectLocationError = createSelector(selectSalonState, (state) => state.locationError);
+
 // SALON + VLASNIK + PROSECNA OCENA
 const average = (rates: number[]): number =>
   rates.length ? rates.reduce((sum, rate) => sum + rate, 0) / rates.length : 0;
@@ -25,18 +33,32 @@ const average = (rates: number[]): number =>
 export const selectSalonViews = createSelector(
   selectAllSalons,
   selectOwnerEntities,
-  (salons, owners): SalonViewDto[] =>
-    salons.map((salon) => ({
-      ...salon,
-      owner: owners[salon.ownerId],
-      avgRating: average(salon.reviews.map((review) => review.rate)),
-      reviewCount: salon.reviews.length,
-    })),
-);
+  selectUserLocation,
+  selectFavoriteIds,
+  (salons, owners, location, favoriteIds): SalonViewDto[] =>
+    salons.map((salon) => {
+      const { latitude, longitude } = salon as SalonStoreDto & {
+        latitude?: number | null;
+        longitude?: number | null;
+      };
+
+      return {
+        ...salon,
+        owner: owners[salon.ownerId],
+        avgRating: average(salon.reviews.map((review) => review.rate)),
+        reviewCount: salon.reviews.length,
+        distanceKm:
+          location && latitude != null && longitude != null
+            ? distanceKm(location, { latitude, longitude })
+            : null,
+        isFavorite: favoriteIds.includes(salon.id),
+      };
+    }),
+);  
 
 // FILTRIRANJE I SORTIRANJE
 const comparators: Record<
-  SalonFilterDto['sortBy'],
+  Exclude<SalonFilterDto['sortBy'], 'distance'>,
   (a: SalonViewDto, b: SalonViewDto) => number
 > = {
   rating: (a, b) => a.avgRating - b.avgRating,
@@ -52,13 +74,24 @@ export const selectFilteredSalons = createSelector(
     const city = filters.city.trim().toLowerCase();
     const search = filters.search.trim().toLowerCase();
     const direction = filters.order === 'ASC' ? 1 : -1;
+    const distanceOf = (salon: SalonViewDto): number => salon.distanceKm ?? Number.MAX_SAFE_INTEGER;
 
     return salons
       .filter((salon) => !city || (salon.city ?? '').toLowerCase().includes(city))
       .filter((salon) => !filters.category || salon.category === filters.category)
       .filter((salon) => !search || salon.name.toLowerCase().includes(search))
       .filter((salon) => salon.avgRating >= filters.minRating)
-      .sort((a, b) => comparators[filters.sortBy](a, b) * direction);
+      .filter(
+        (salon) =>
+          filters.maxDistance === 0 ||
+          (salon.distanceKm !== null && salon.distanceKm <= filters.maxDistance),
+      )
+      .filter((salon) => !filters.onlyFavorites || salon.isFavorite)
+      .sort((a, b) =>
+        filters.sortBy === 'distance'
+          ? distanceOf(a) - distanceOf(b)
+          : comparators[filters.sortBy](a, b) * direction,
+      );
   },
 );
 

@@ -4,6 +4,7 @@ import { ReviewDto } from "../../dtos/review.dto";
 import { CreateReviewDto } from "../../dtos/create-review.dto";
 import { SalonFilterDto } from "../../dtos/salon-filter.dto";
 import { CreateTreatmentDto } from "../../dtos/treatment.dto";
+import { GeoPoint } from "../../dtos/geo-point.dto";
 
 //SVI SALONI
 export const loadSalons= createAction(
@@ -137,4 +138,20 @@ export const deleteTreatmentSuccess = createAction(
 export const deleteTreatmentFailure = createAction(
     '[Salon] Delete Treatment Failure',
     props<{error: string}>()
+);
+
+//LOKACIJA KORISNIKA
+export const locateUser = createAction(
+    '[Salon] Locate User'
+);
+export const locateUserSuccess = createAction(
+    '[Salon] Locate User Success',
+    props<{location: GeoPoint}>()
+);
+export const locateUserFailure = createAction(
+    '[Salon] Locate User Failure',
+    props<{error: string}>()
+);
+export const clearUserLocation = createAction(
+    '[Salon] Clear User Location'
 );

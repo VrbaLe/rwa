@@ -17,6 +17,9 @@ import { selectMyReviews, selectOwnerAppointments } from '../../shared/store/use
 import { selectIsOwner, selectCurrentUser } from '../../shared/store/user/user.selectors';
 import { selectCurrentOwner, selectMySalons } from '../../shared/store/user/user-view.selectors';
 import { OwnerCalendarComponent } from '../../shared/components/owner-calendar/owner-calendar.component';
+import { OwnerStatisticsComponent } from '../../shared/components/owner-statistics/owner-statistics.component';
+import { addFavorite, removeFavorite } from '../../shared/store/favorite/favorite.actions';
+import { selectFavoriteSalons } from '../../shared/store/favorite/favorite-view.selectors';
 
 
 @Component({
@@ -30,7 +33,8 @@ import { OwnerCalendarComponent } from '../../shared/components/owner-calendar/o
     OwnerProfileFormComponent,
     SalonCardComponent,
     StarRatingComponent,
-    OwnerCalendarComponent
+    OwnerCalendarComponent,
+    OwnerStatisticsComponent
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss'
@@ -45,6 +49,7 @@ export class ProfileComponent implements OnInit {
   myReviews$ = this.store.select(selectMyReviews);
   mySalons$ = this.store.select(selectMySalons);
   ownerAppointments$ = this.store.select(selectOwnerAppointments);
+  favoriteSalons$ = this.store.select(selectFavoriteSalons);
 
   constructor(
     private store: Store,
@@ -93,5 +98,11 @@ export class ProfileComponent implements OnInit {
 
   editSalon(id: number): void {
     this.router.navigate(['/salons', id, 'edit']);
+  }
+
+  toggleFavorite(event: { id: number; favorite: boolean }): void {
+    this.store.dispatch(
+      event.favorite ? addFavorite({ salon_id: event.id }) : removeFavorite({ salon_id: event.id })
+    );
   }
 }

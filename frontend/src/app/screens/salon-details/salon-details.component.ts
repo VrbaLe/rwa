@@ -16,6 +16,7 @@ import { selectIsLoggedIn, selectUserId } from '../../shared/store/user/user.sel
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TreatmentListComponent } from '../../shared/components/treatment-list/treatment-list.component';
 import { formatWorkingDays } from '../../shared/local-lists/working-hours.list';
+import { addFavorite, removeFavorite } from '../../shared/store/favorite/favorite.actions';
 
 @Component({
   selector: 'app-salon-details',
@@ -78,6 +79,12 @@ export class SalonDetailsComponent implements OnInit, OnDestroy {
 
   workingDaysLabel(workingDays: string): string {
     return formatWorkingDays(workingDays);
+  }
+
+  toggleFavorite(salon: SalonViewDto): void {
+    this.store.dispatch(
+      salon.isFavorite ? removeFavorite({ salon_id: salon.id }) : addFavorite({ salon_id: salon.id })
+    );
   }
 
   ngOnDestroy(): void {

@@ -3,6 +3,7 @@ import { EntityState, createEntityAdapter } from '@ngrx/entity';
 import { SalonInfoDto } from '../../dtos/salon-info.dto';
 import { SalonStoreDto } from '../../dtos/salon-store.dto';
 import { SalonFilterDto } from '../../dtos/salon-filter.dto';
+import { GeoPoint } from '../../dtos/geo-point.dto';
 import {
     addReviewFailure,
     addReviewSuccess,
@@ -29,7 +30,11 @@ import {
     addTreatmentFailure,
     deleteTreatment,
     deleteTreatmentFailure,
-    deleteTreatmentSuccess
+    deleteTreatmentSuccess,
+    clearUserLocation,
+    locateUser,
+    locateUserFailure,
+    locateUserSuccess
 } from './salon.actions';
 
 export interface SalonState extends EntityState<SalonStoreDto> {
@@ -43,6 +48,10 @@ export interface SalonState extends EntityState<SalonStoreDto> {
 
     loading: boolean;
     error: string | null;
+
+    userLocation: GeoPoint | null;
+    locating: boolean;
+    locationError: string | null;
 }
 
 export const salonAdapter = createEntityAdapter<SalonStoreDto>();
@@ -52,6 +61,8 @@ export const initialFilters: SalonFilterDto = {
     category: '',
     search: '',
     minRating: 0,
+    maxDistance: 0,
+    onlyFavorites: false,
     sortBy: 'rating',
     order: 'DESC'
 };
@@ -66,7 +77,11 @@ export const initialState: SalonState = salonAdapter.getInitialState({
     newSalonAdded: false,
 
     loading: false,
-    error: null
+    error: null,
+
+    userLocation: null,
+    locating: false,
+    locationError: null,
 });
 
 const toStoreDto = ({ owner, reviews, avgRating, reviewCount, ...rest }: SalonInfoDto): SalonStoreDto => ({
@@ -205,5 +220,33 @@ export const salonReducer = createReducer(
         ...state,
         loading: false,
         error: error
+    })),
+
+        // LOKACIJA KORISNIKA
+    on(locateUser, (state) => ({
+        ...state,
+        locating: true,
+        locationError: null
+    })),
+    on(locateUserSuccess, (state, { location }) => ({
+        ...state,
+        userLocation: location,
+        locating: false,
+        filters: { ...state.filters, sortBy: 'distance' as const }
+    })),
+    on(locateUserFailure, (state, { error }) => ({
+        ...state,
+        locating: false,
+        locationError: error
+    })),
+    on(clearUserLocation, (state) => ({
+        ...state,
+        userLocation: null,
+        locationError: null,
+        filters: {
+            ...state.filters,
+            maxDistance: 0,
+            sortBy: state.filters.sortBy === 'distance' ? 'rating' : state.filters.sortBy
+        }
     }))
 );

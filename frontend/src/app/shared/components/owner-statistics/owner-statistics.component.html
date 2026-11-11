@@ -1,0 +1,92 @@
+@if (stats$ | async; as stats) {
+  <div class="cards">
+    <app-stat-card
+      label="Danas"
+      [value]="(stats.summary.today | number: '1.0-0') + ' RSD'"
+      [hint]="stats.summary.appointmentsToday + ' termina'"
+      [highlight]="true" />
+    <app-stat-card
+      label="Ova nedelja"
+      [value]="(stats.summary.week | number: '1.0-0') + ' RSD'"
+      [hint]="stats.summary.appointmentsWeek + ' termina'" />
+    <app-stat-card
+      label="Ovaj mesec"
+      [value]="(stats.summary.month | number: '1.0-0') + ' RSD'"
+      [hint]="stats.summary.appointmentsMonth + ' termina'" />
+    <app-stat-card
+      label="Ova godina"
+      [value]="(stats.summary.year | number: '1.0-0') + ' RSD'" />
+    <app-stat-card
+      label="Ukupno"
+      [value]="(stats.summary.total | number: '1.0-0') + ' RSD'"
+      [hint]="stats.summary.appointmentsTotal + ' termina'" />
+    <app-stat-card
+      label="Očekivano (zakazano unapred)"
+      [value]="(stats.summary.upcoming | number: '1.0-0') + ' RSD'"
+      [hint]="stats.summary.appointmentsUpcoming + ' termina'" />
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <h3>Zarada</h3>
+      <div class="toggle">
+        <button type="button" [class.active]="mode === 'daily'" (click)="setMode('daily')">Poslednjih 30 dana</button>
+        <button type="button" [class.active]="mode === 'monthly'" (click)="setMode('monthly')">Poslednjih 12 meseci</button>
+      </div>
+    </div>
+    <app-bar-chart [items]="(chart$ | async) ?? []" unit="RSD" />
+  </div>
+
+  <div class="tables">
+    <div class="panel">
+      <h3>Najtraženije usluge</h3>
+      <table>
+        <thead>
+          <tr><th>Usluga</th><th>Termina</th><th>Zarada</th></tr>
+        </thead>
+        <tbody>
+          @for (treatment of stats.topTreatments; track treatment.name) {
+            <tr>
+              <td>{{ treatment.name }}</td>
+              <td>{{ treatment.count }}</td>
+              <td>{{ treatment.revenue | number: '1.0-0' }} RSD</td>
+            </tr>
+          } @empty {
+            <tr><td colspan="3" class="muted">Još nema podataka.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel">
+      <h3>Zarada po salonima</h3>
+      <table>
+        <thead>
+          <tr><th>Salon</th><th>Termina</th><th>Zarada</th></tr>
+        </thead>
+        <tbody>
+          @for (salon of stats.bySalon; track salon.salonId) {
+            <tr>
+              <td>{{ salon.salonName }}</td>
+              <td>{{ salon.appointments }}</td>
+              <td>{{ salon.revenue | number: '1.0-0' }} RSD</td>
+            </tr>
+          } @empty {
+            <tr><td colspan="3" class="muted">Još nema podataka.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <p class="muted note">
+    Zarada se računa po ceni izabrane usluge za termine do danas. Termini bez izabrane usluge
+    ulaze u broj termina, ali ne i u zaradu.
+  </p>
+} @else if (loading$ | async) {
+  <p class="muted">Učitavanje statistike...</p>
+}
+
+@if (error$ | async; as error) {
+  <p class="error">{{ error }}</p>
+}
