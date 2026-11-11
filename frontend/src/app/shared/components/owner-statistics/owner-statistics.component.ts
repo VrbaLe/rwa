@@ -1,62 +1,86 @@
 import { Component, OnInit } from '@angular/core';
 import { AsyncPipe, DecimalPipe } from '@angular/common';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { BehaviorSubject, Observable, combineLatest, map } from 'rxjs';
-import { BarChartComponent, BarItem } from '../bar-chart/bar-chart.component';
-import { StatCardComponent } from '../stat-card/stat-card.component';
-import { OwnerStatsDto } from '../../dtos/owner-stats.dto';
-import { loadStatistics } from '../../store/statistics/statistics.actions';
-import {
-  selectStatistics,
-  selectStatisticsError,
-  selectStatisticsLoading
-} from '../../store/statistics/statistics.selectors';
+import { Observable, map, startWith, switchMap, take } from 'rxjs';
+import { SalonViewDto } from '../../dtos/salon-view.dto';
+import { loadAppointments } from '../../store/appointment/appointment.actions';
+import { loadSalons } from '../../store/salon/salon.actions';
+import { selectSalonsLoaded } from '../../store/salon/salon.selectors';
+import { RevenueGroup, RevenueRow, selectRevenueRows } from '../../store/user/revenue.selectors';
+import { selectMySalons } from '../../store/user/user-view.selectors';
 
-type ChartMode = 'daily' | 'monthly';
-
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Avg', 'Sep', 'Okt', 'Nov', 'Dec'];
+const MONTHS = [
+  'Januar', 'Februar', 'Mart', 'April', 'Maj', 'Jun',
+  'Jul', 'Avgust', 'Septembar', 'Oktobar', 'Novembar', 'Decembar'
+];
 
 @Component({
   selector: 'app-owner-statistics',
   standalone: true,
-  imports: [AsyncPipe, DecimalPipe, StatCardComponent, BarChartComponent],
+  imports: [AsyncPipe, DecimalPipe, ReactiveFormsModule],
   templateUrl: './owner-statistics.component.html',
   styleUrl: './owner-statistics.component.scss'
 })
 export class OwnerStatisticsComponent implements OnInit {
-  mode: ChartMode = 'daily';
-  private mode$ = new BehaviorSubject<ChartMode>('daily');
+  mySalons$: Observable<SalonViewDto[]> = this.store.select(selectMySalons);
 
-  stats$: Observable<OwnerStatsDto | null> = this.store.select(selectStatistics);
-  loading$: Observable<boolean> = this.store.select(selectStatisticsLoading);
-  error$: Observable<string | null> = this.store.select(selectStatisticsError);
+  form = this.fb.nonNullable.group({
+    salonId: ['all'],
+    group: ['day' as RevenueGroup],
+    onlyDone: [false]
+  });
 
-  // grafikon se racuna iz statistike i izabranog prikaza (dan / mesec)
-  chart$: Observable<BarItem[]> = combineLatest([this.stats$, this.mode$]).pipe(
-    map(([stats, mode]) => {
-      if (!stats) {
-        return [];
-      }
-      return mode === 'daily'
-        ? stats.daily.map(day => ({
-            label: `${day.date.slice(8, 10)}.${day.date.slice(5, 7)}.`,
-            value: day.revenue
-          }))
-        : stats.monthly.map(month => ({
-            label: `${MONTHS[Number(month.month.slice(5, 7)) - 1]} ${month.month.slice(2, 4)}`,
-            value: month.revenue
-          }));
-    })
+  // kad se promeni salon, period ili checkbox, izracunaj nove redove
+  rows$: Observable<RevenueRow[]> = this.form.valueChanges.pipe(
+    startWith(this.form.getRawValue()),
+    switchMap(value =>
+      this.store.select(selectRevenueRows(value.salonId ?? 'all', value.group ?? 'day', !!value.onlyDone))
+    )
   );
 
-  constructor(private store: Store) {}
+  totals$ = this.rows$.pipe(
+    map(rows =>
+      rows.reduce(
+        (total, row) => ({
+          appointments: total.appointments + row.appointments,
+          revenue: total.revenue + row.revenue
+        }),
+        { appointments: 0, revenue: 0 }
+      )
+    )
+  );
+
+  constructor(
+    private fb: FormBuilder,
+    private store: Store
+  ) {}
 
   ngOnInit(): void {
-    this.store.dispatch(loadStatistics());
+    this.store.dispatch(loadAppointments());
+
+    this.store.select(selectSalonsLoaded).pipe(take(1)).subscribe(loaded => {
+      if (!loaded) {
+        this.store.dispatch(loadSalons());
+      }
+    });
   }
 
-  setMode(mode: ChartMode): void {
-    this.mode = mode;
-    this.mode$.next(mode);
+  get group(): RevenueGroup {
+    return this.form.controls.group.value;
+  }
+
+  setGroup(group: RevenueGroup): void {
+    this.form.controls.group.setValue(group);
+  }
+
+  label(period: string): string {
+    if (this.group === 'day') {
+      return `${period.slice(8, 10)}.${period.slice(5, 7)}.${period.slice(0, 4)}`;
+    }
+    if (this.group === 'month') {
+      return `${MONTHS[Number(period.slice(5, 7)) - 1]} ${period.slice(0, 4)}`;
+    }
+    return period;
   }
 }
