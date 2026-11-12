@@ -31,6 +31,12 @@ export class Salon {
     @Column({ nullable: true })
     address: string;
     
+    @Column({ type: 'double precision', nullable: true })
+    latitude: number | null;
+
+    @Column({ type: 'double precision', nullable: true })
+    longitude: number | null;
+    
     @ManyToOne(() => Owner, (owner) => owner.salons , {eager: true})
     owner: Owner;
 

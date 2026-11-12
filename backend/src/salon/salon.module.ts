@@ -8,10 +8,12 @@ import { UserModule } from 'src/user/user.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { Owner } from 'src/owner/entities/owner.entity';
 import { OwnerModule } from 'src/owner/owner.module';
+import { GeocodingModule } from 'src/geocoding/geocoding.module';
+import { SalonCoordinatesBackfill } from './salon-coordinates.backfill';
 
 @Module({
-  imports:[TypeOrmModule.forFeature([Salon, Owner]), OwnerModule, AuthModule],
+  imports:[TypeOrmModule.forFeature([Salon, Owner]), OwnerModule, AuthModule, GeocodingModule],
   controllers: [SalonController],
-  providers: [SalonService],
+  providers: [SalonService, SalonCoordinatesBackfill],
 })
 export class SalonModule {}

@@ -9,6 +9,8 @@ export class CreateSalonDto{
     category: string;
     city: string;
     address?: string;
+    latitude?: string | number;
+    longitude?: string | number;
     tags?: string;
     openTime?: string;
     closeTime?: string;

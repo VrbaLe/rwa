@@ -4,12 +4,13 @@ import { Repository, UpdateResult, Like, ILike } from 'typeorm';
 import { CreateSalonDto } from './dto/create-salon.dto';
 import { UpdateSalonDto } from './dto/update-salon.dto';
 import { Salon } from './entities/salon.entity';
-import { from, map, mergeMap, Observable, switchMap, toArray, throwError } from 'rxjs';
+import { from, map, mergeMap, Observable, switchMap, toArray, throwError, of } from 'rxjs';
 import { User } from 'src/user/entities/user.entity';
 import { Owner } from 'src/owner/entities/owner.entity';
 import { PaginationDto } from 'src/pagination/paginate.dto';
 import { SalonInfo } from './dto/salon-info.dto';
 import { DeleteResult } from 'typeorm';
+import { GeocodingService } from 'src/geocoding/geocoding.service';
 
 @Injectable()
 export class SalonService {
@@ -17,7 +18,8 @@ export class SalonService {
     @InjectRepository(Salon)
     private salonRepository: Repository<Salon>,
     @InjectRepository(Owner)
-    private ownerRepository: Repository<Owner>
+    private ownerRepository: Repository<Owner>,
+    private geocodingService: GeocodingService,
   ){}
 
   create(salonData: CreateSalonDto, userId:number): Observable<Salon> {
@@ -38,13 +40,17 @@ export class SalonService {
         salon.category = salonData.category;
         salon.city = salonData.city;
         salon.address = salonData.address;
+        salon.latitude = this.toCoordinate(salonData.latitude);
+        salon.longitude = this.toCoordinate(salonData.longitude);
         salon.tags = salonData.tags;
         salon.owner = owner;
         salon.openTime = salonData.openTime || '09:00';
         salon.closeTime = salonData.closeTime || '17:00';
         salon.workingDays = salonData.workingDays || '1,2,3,4,5,6';
 
-        return from(this.salonRepository.save(salon));
+        return this.withCoordinates(salon).pipe(
+          switchMap((withCoordinates) => from(this.salonRepository.save(withCoordinates))),
+        );
       }),
     );
   }
@@ -65,6 +71,8 @@ export class SalonService {
             category: salon.category,
             city: salon.city,
             address: salon.address,
+            latitude: salon.latitude,
+            longitude: salon.longitude,
             tags: salon.tags,
             reviews: (salon.reviews ?? []).map(r => ({
               id: r.id,
@@ -130,5 +138,30 @@ export class SalonService {
 
   deleteSalon(id: number): Observable<DeleteResult>{
     return from(this.salonRepository.delete({id}));
+  }
+
+    // koordinate se traze iz adrese samo ako ih vlasnik nije vec postavio (npr. klikom na mapu)
+  private withCoordinates(salon: Salon): Observable<Salon> {
+    const hasCoordinates = salon.latitude != null && salon.longitude != null;
+    if (hasCoordinates || !salon.address) {
+      return of(salon);
+    }
+    return from(this.geocodingService.geocode(salon.address, salon.city)).pipe(
+      map((coordinates) => {
+        if (coordinates) {
+          salon.latitude = coordinates.latitude;
+          salon.longitude = coordinates.longitude;
+        }
+        return salon;
+      }),
+    );
+  }
+
+  private toCoordinate(value?: string | number | null): number | null {
+    if (value === undefined || value === null || value === '') {
+      return null;
+    }
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
   }
 }

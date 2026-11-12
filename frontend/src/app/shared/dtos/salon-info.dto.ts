@@ -10,6 +10,8 @@ export interface SalonInfoDto {
   category: string;
   city?: string;
   address?: string;
+  latitude?: number | null;
+  longitude?: number | null;
   tags?: string;
   created_at: string;
   owner: OwnerDto;

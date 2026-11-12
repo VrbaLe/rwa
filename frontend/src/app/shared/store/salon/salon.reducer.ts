@@ -4,6 +4,7 @@ import { SalonInfoDto } from '../../dtos/salon-info.dto';
 import { SalonStoreDto } from '../../dtos/salon-store.dto';
 import { SalonFilterDto } from '../../dtos/salon-filter.dto';
 import { GeoPoint } from '../../dtos/geo-point.dto';
+import { locateByAddress } from './salon.actions';
 import {
     addReviewFailure,
     addReviewSuccess,
@@ -223,7 +224,7 @@ export const salonReducer = createReducer(
     })),
 
         // LOKACIJA KORISNIKA
-    on(locateUser, (state) => ({
+    on(locateUser, locateByAddress, (state) => ({
         ...state,
         locating: true,
         locationError: null

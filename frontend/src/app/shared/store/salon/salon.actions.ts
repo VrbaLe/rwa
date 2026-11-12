@@ -155,3 +155,8 @@ export const locateUserFailure = createAction(
 export const clearUserLocation = createAction(
     '[Salon] Clear User Location'
 );
+
+export const locateByAddress = createAction(
+    '[Salon] Locate By Address',
+    props<{query: string}>()
+);

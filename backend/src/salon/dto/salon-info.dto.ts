@@ -10,6 +10,8 @@ export class SalonInfo {
     category: string;    
     city: string;
     address?: string;
+    latitude?: number | null;
+    longitude?: number | null;
     tags?: string;
     openTime: string;
     closeTime: string;

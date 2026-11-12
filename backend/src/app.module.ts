@@ -17,6 +17,7 @@ import { Owner } from './owner/entities/owner.entity';
 import { Salon } from './salon/entities/salon.entity';
 import { TreatmentsModule } from './treatments/treatments.module';
 import { FavoritesModule } from './favorites/favorites.module';
+import { GeocodingModule } from './geocoding/geocoding.module';
 
 @Module({
   imports: [
@@ -46,7 +47,8 @@ import { FavoritesModule } from './favorites/favorites.module';
     ReviewsModule,
     AppointmentsModule,
     TreatmentsModule,
-    FavoritesModule
+    FavoritesModule,
+    GeocodingModule
   ],
   controllers: [AppController],
   providers: [AppService],

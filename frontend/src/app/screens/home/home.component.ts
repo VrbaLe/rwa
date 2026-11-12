@@ -11,7 +11,7 @@ import { SalonViewDto } from '../../shared/dtos/salon-view.dto';
 import { CATEGORIES } from '../../shared/local-lists/categories.list';
 import { initialFilters } from '../../shared/store/salon/salon.reducer';
 import { addFavorite, removeFavorite } from '../../shared/store/favorite/favorite.actions';
-import { clearUserLocation, loadSalons, locateUser, resetFilters, setFilters } from '../../shared/store/salon/salon.actions';
+import { clearUserLocation, loadSalons, locateByAddress, locateUser, resetFilters, setFilters } from '../../shared/store/salon/salon.actions';
 import {
   selectCities,
   selectFilteredSalons,
@@ -117,6 +117,12 @@ export class HomeComponent implements OnInit, OnDestroy {
     //this.filterForm.reset(initialFilters, { emitEvent: false });
   }
 
+  useAddress(query: string): void {
+    if (query.trim()) {
+      this.store.dispatch(locateByAddress({ query: query.trim() }));
+    }
+  }
+  
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();

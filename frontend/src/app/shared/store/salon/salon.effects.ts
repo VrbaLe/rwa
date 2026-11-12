@@ -8,6 +8,7 @@ import { ReviewService } from "../../services/review/review.service";
 import { TreatmentService } from "../../services/treatment/treatment.service";
 import { SalonInfoDto } from "../../dtos/salon-info.dto";
 import { LocationService } from "../../services/location/location.service";
+import { locateByAddress } from "./salon.actions";
 import {
   addReview,
   addReviewFailure,
@@ -257,6 +258,20 @@ export class SalonEffects {
           map(location => locateUserSuccess({ location })),
           catchError(error =>
             of(locateUserFailure({ error: error.message ?? "Lokacija trenutno nije dostupna." }))
+          )
+        )
+      )
+    )
+  );
+
+  locateByAddress = createEffect(() =>
+    this.actions$.pipe(
+      ofType(locateByAddress),
+      mergeMap(action =>
+        this.locationService.locateByAddress(action.query).pipe(
+          map(location => locateUserSuccess({ location })),
+          catchError(error =>
+            of(locateUserFailure({ error: error.message ?? "Adresa nije pronađena." }))
           )
         )
       )
