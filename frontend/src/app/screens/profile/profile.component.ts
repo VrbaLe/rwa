@@ -79,7 +79,9 @@ export class ProfileComponent implements OnInit {
   }
 
   cancelAppointment(id: number): void {
-    this.store.dispatch(deleteAppointment({ id }));
+    if (confirm('Da li ste sigurni da želite da otkažete termin?')) {
+      this.store.dispatch(deleteAppointment({ id }));
+    }
   }
 
   removeReview(review: MyReviewViewDto): void {

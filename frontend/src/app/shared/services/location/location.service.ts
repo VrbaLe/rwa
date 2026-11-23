@@ -53,6 +53,6 @@ export class LocationService {
         return 'Određivanje lokacije traje predugo. Pokušaj ponovo ili upiši svoju adresu.';
       default:
         return 'Browser ne može da odredi lokaciju na ovom računaru. Upiši svoju adresu ili grad.';
-    }
+    } 
   }
 }

@@ -7,9 +7,9 @@
 
     @if (isOwner$ | async) {
       <div class="tabs">
+        <button type="button" [class.active]="tab === 'profile'" (click)="setTab('profile')">Moj profil</button>
         <button type="button" [class.active]="tab === 'salons'" (click)="setTab('salons')">Moji saloni</button>
         <button type="button" [class.active]="tab === 'ownerAppointments'" (click)="setTab('ownerAppointments')">Termini u mojim salonima</button>
-        <button type="button" [class.active]="tab === 'profile'" (click)="setTab('profile')">Moj profil</button>
         <button type="button" [class.active]="tab === 'statistics'" (click)="setTab('statistics')">Statistika</button>
         <button type="button" [class.active]="tab === 'favorites'" (click)="setTab('favorites')">Omiljeni</button>
       </div>
@@ -73,6 +73,7 @@
       <div class="tabs">
         <button type="button" [class.active]="tab === 'appointments'" (click)="setTab('appointments')">Moji termini</button>
         <button type="button" [class.active]="tab === 'reviews'" (click)="setTab('reviews')">Moje recenzije</button>
+        <button type="button" [class.active]="tab === 'favorites'" (click)="setTab('favorites')">Omiljeni saloni</button>
       </div>
 
       @switch (tab) {
@@ -97,6 +98,20 @@
             <p class="muted">Još nisi ostavio nijednu recenziju.</p>
           }
         }
+
+        @case ('favorites') {
+        <div class="grid">
+          @for (salon of favoriteSalons$ | async; track salon.id) {
+            <app-salon-card
+              [salon]="salon"
+              [showFavorite]="true"
+              (selected)="openSalon($event)"
+              (favoriteToggle)="toggleFavorite($event)" />
+          } @empty {
+            <p class="muted">Još nemaš omiljenih salona. Klikni na srce na kartici salona.</p>
+          }
+        </div>
+      }
       }
     }
   }

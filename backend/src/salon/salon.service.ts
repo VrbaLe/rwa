@@ -140,7 +140,7 @@ export class SalonService {
     return from(this.salonRepository.delete({id}));
   }
 
-    // koordinate se traze iz adrese samo ako ih vlasnik nije vec postavio (npr. klikom na mapu)
+  // koordinate se traze iz adrese
   private withCoordinates(salon: Salon): Observable<Salon> {
     const hasCoordinates = salon.latitude != null && salon.longitude != null;
     if (hasCoordinates || !salon.address) {

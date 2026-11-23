@@ -223,7 +223,7 @@ export const salonReducer = createReducer(
         error: error
     })),
 
-        // LOKACIJA KORISNIKA
+    // LOKACIJA KORISNIKA
     on(locateUser, locateByAddress, (state) => ({
         ...state,
         locating: true,
